@@ -40,3 +40,6 @@ void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 	
 }
 
+
+
+

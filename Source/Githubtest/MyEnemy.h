@@ -15,6 +15,9 @@ public:
 	// Sets default values for this character's properties
 	AMyEnemy();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* MeshComp;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
