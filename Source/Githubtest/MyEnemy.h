@@ -4,12 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "EnumEnemyState.h"
 #include "MyEnemy.generated.h"
 
 UCLASS()
 class GITHUBTEST_API AMyEnemy : public ACharacter
 {
 	GENERATED_BODY()
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EnumEnemyState> InitialState;
+
+	class UBlackboardComponent* BlackboardComp;
 
 public:
 	// Sets default values for this character's properties

@@ -2,6 +2,8 @@
 
 
 #include "MyEnemy.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 AMyEnemy::AMyEnemy()
@@ -16,6 +18,13 @@ void AMyEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//BlackboardComp = GetController<AAIController>().GetBlackboardComponent();
+	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
+	
+	BlackboardComp->SetValueAsEnum( 
+	    TEXT("CurrentState"), 
+	    InitialState
+	);
 }
 
 // Called every frame
@@ -34,10 +43,22 @@ void AMyEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 {
-	if (DetectedPawn != PawnToDetect) {return;}
+    EnumEnemyState CurrentState
+    {
+        static_cast<EnumEnemyState>(BlackboardComp->SetValueAsEnum( 
+            TEXT("CurrentState")
+        ));
+    }
+    
 
-	UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
+	if (DetectedPawn != PawnToDetect || CurrentState != EnumEnemyState::Idle) {return;}
+
+	//UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
 	
+	BlackboardComp->SetValueAsEnum( 
+        TEXT("CurrentState"), 
+        EnumEnemyState::Range
+    );
 }
 
 
