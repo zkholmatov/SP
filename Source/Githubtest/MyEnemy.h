@@ -11,6 +11,7 @@ UCLASS()
 class GITHUBTEST_API AMyEnemy : public ACharacter
 {
 	GENERATED_BODY()
+	
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EnumEnemyState> InitialState;
 

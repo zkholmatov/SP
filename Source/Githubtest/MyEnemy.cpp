@@ -44,9 +44,8 @@ void AMyEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 {
 	// Setting initial state correctly
-	EnumEnemyState CurrentState = 
-		static_cast<EnumEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
-    
+	EnumEnemyState CurrentState = static_cast<EnumEnemyState>
+	(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
 
 	if (DetectedPawn != PawnToDetect || CurrentState != EnumEnemyState::Idle)
 	{
