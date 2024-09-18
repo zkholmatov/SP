@@ -43,15 +43,15 @@ void AMyEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 {
-    EnumEnemyState CurrentState
-    {
-        static_cast<EnumEnemyState>(BlackboardComp->SetValueAsEnum( 
-            TEXT("CurrentState")
-        ));
-    }
+	// Setting initial state correctly
+	EnumEnemyState CurrentState = 
+		static_cast<EnumEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
     
 
-	if (DetectedPawn != PawnToDetect || CurrentState != EnumEnemyState::Idle) {return;}
+	if (DetectedPawn != PawnToDetect || CurrentState != EnumEnemyState::Idle)
+	{
+		return;
+	}
 
 	//UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
 	

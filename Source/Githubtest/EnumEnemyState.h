@@ -7,6 +7,6 @@
 UENUM(BlueprintType)
 enum EnumEnemyState
 {
-	idle UMETA(DisplayName = "Idle"),
-	range UMETA(DisplayName = "Range")
+	Idle UMETA(DisplayName = "Idle"),
+	Range UMETA(DisplayName = "Range")
 };
