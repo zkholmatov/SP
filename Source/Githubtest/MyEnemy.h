@@ -11,10 +11,12 @@ UCLASS()
 class GITHUBTEST_API AMyEnemy : public ACharacter
 {
 	GENERATED_BODY()
-	
+
+	// Variable to store the initial state of the enemy, editable in the Unreal Editor
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EnumEnemyState> InitialState;
 
+	// Pointer to the Blackboard Component used for AI state management
 	class UBlackboardComponent* BlackboardComp;
 
 public:
