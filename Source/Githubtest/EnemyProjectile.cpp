@@ -40,3 +40,8 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
 }
 
+//void AEnemyProjectile::Destroyed()
+//{
+    
+//}
+
