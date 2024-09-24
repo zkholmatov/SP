@@ -4,6 +4,8 @@
 #include "EnemyProjectile.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -66,7 +68,20 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 		DeathTimerHandle,
 		this,
 		&AEnemyProjectile::DestroyProjectile,
-		.05f);
+		.05f
+		);
+
+	FindComponentByClass<UParticleSystemComponent>()
+	->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FDamageEvent ProjectileDamageEvent{};
+
+	PawnRef->TakeDamage(
+		Damage,
+		ProjectileDamageEvent,
+		PawnRef->GetController(),
+		this
+		);
 }
 
 void AEnemyProjectile::DestroyProjectile()
