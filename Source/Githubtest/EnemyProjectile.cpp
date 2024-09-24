@@ -4,6 +4,8 @@
 #include "EnemyProjectile.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -17,7 +19,15 @@ AEnemyProjectile::AEnemyProjectile()
 void AEnemyProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Start a timer to destroy the projectile after 5 seconds if it does not hit the player
+	GetWorldTimerManager().SetTimer(
+		DestroyTimerHandle,
+		this,
+		&AEnemyProjectile::DestroyProjectile,
+		5.0f,
+		false
+	);
 }
 
 // Called every frame
@@ -35,13 +45,49 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 
 	// UE_LOG(LogTemp, Warning, TEXT("Overlapped with player!"));
 
-	FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitParticle);
+	// FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitParticle);
+	//
+	// FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
 
-	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
+	if (UParticleSystemComponent* ParticleComponent = FindComponentByClass<UParticleSystemComponent>())
+	{
+		ParticleComponent->SetTemplate(HitParticle);
+	}
+
+	if (UProjectileMovementComponent* MovementComponent = FindComponentByClass<UProjectileMovementComponent>())
+	{
+		MovementComponent->StopMovementImmediately();
+	}
+	
+	// Clear the timer since it hit the player, so the projectile won’t be destroyed after 5 seconds
+	GetWorldTimerManager().ClearTimer(DestroyTimerHandle);
+
+	FTimerHandle DeathTimerHandle{};
+	
+	GetWorldTimerManager().SetTimer(
+		DeathTimerHandle,
+		this,
+		&AEnemyProjectile::DestroyProjectile,
+		.05f
+		);
+
+	FindComponentByClass<UParticleSystemComponent>()
+	->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FDamageEvent ProjectileDamageEvent{};
+
+	PawnRef->TakeDamage(
+		Damage,
+		ProjectileDamageEvent,
+		PawnRef->GetController(),
+		this
+		);
 }
 
-//void AEnemyProjectile::Destroyed()
-//{
-    
-//}
+void AEnemyProjectile::DestroyProjectile()
+{
+	Destroy();
+}
+
+
 

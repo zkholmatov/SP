@@ -13,6 +13,9 @@ class GITHUBTEST_API AEnemyProjectile : public AActor
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* HitParticle;
+
+	UPROPERTY(EditAnywhere)
+	float Damage{ 10.0f };
 	
 public:	
 	// Sets default values for this actor's properties
@@ -29,7 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleBeginOverlap(AActor* OtherActor);
 	    
-	//UFUNCTION()
-	//void DestroyProjectile();
+	UFUNCTION()
+	void DestroyProjectile();
+
+private:
+	FTimerHandle DestroyTimerHandle;
 
 };
