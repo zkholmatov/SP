@@ -29,7 +29,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleBeginOverlap(AActor* OtherActor);
 	    
-	//UFUNCTION()
-	//void DestroyProjectile();
+	UFUNCTION()
+	void DestroyProjectile();
+
+private:
+	FTimerHandle DestroyTimerHandle;
 
 };
