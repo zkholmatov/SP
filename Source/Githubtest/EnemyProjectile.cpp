@@ -34,7 +34,6 @@ void AEnemyProjectile::BeginPlay()
 void AEnemyProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)

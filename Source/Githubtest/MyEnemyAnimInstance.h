@@ -18,4 +18,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
 	float currentVelocity{0.0f};
 
+public:
+	UPROPERTY(editAnywhere, BlueprintReadWrite, Category = "variables")
+	bool isCharging{ false };
 };

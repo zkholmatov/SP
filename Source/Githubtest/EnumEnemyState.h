@@ -3,10 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnumEnemyState.generated.h"
 
 UENUM(BlueprintType)
 enum EnumEnemyState
 {
-	Idle UMETA(DisplayName = "Idle"),
-	Range UMETA(DisplayName = "Range")
+	
+	Idle UMETA(DisplayName = "Idle"), // Must have comma after each enum state
+	Range UMETA(DisplayName = "Range"),
+	Charge UMETA(DisplayName = "Charge"),
+	MeleeOne UMETA(DisplayName = "MeleeOne")
+	
 };
