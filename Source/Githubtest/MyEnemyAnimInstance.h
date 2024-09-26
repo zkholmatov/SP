@@ -20,5 +20,8 @@ protected:
 
 public:
 	UPROPERTY(editAnywhere, BlueprintReadWrite, Category = "variables")
-	bool isCharging{ false };
+	bool bIsChasing{ false };
+
+	UPROPERTY(editAnywhere, BlueprintReadWrite, Category = "variables")
+	bool bIsAttacking{ false };
 };

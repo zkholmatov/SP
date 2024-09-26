@@ -12,6 +12,7 @@ enum EnumEnemyState
 	Idle UMETA(DisplayName = "Idle"), // Must have comma after each enum state
 	Range UMETA(DisplayName = "Range"),
 	Charge UMETA(DisplayName = "Charge"),
+	Chase UMETA(DisplayName = "Chase"),
 	MeleeOne UMETA(DisplayName = "MeleeOne")
 	
 };
