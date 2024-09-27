@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/MyEnemy.h"
 
 UBTT_ChargeAttack::UBTT_ChargeAttack()
 {
@@ -38,8 +39,16 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
     {
         if (ChargeMontage)
         {
+            
+            
             ControllerRef = OwnerComp.GetAIOwner();
             float MontageDuration = CharacterRef->PlayAnimMontage(ChargeMontage);
+
+            AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
+            if (MyEnemyRef)
+            {
+                MyEnemyRef->MySwordTraceEvent();
+            }
 
             // Ensure the timer delegate is correctly set up to call FinishAttackTask
             FTimerDelegate TimerDel;

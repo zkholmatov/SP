@@ -56,9 +56,11 @@ void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 	
 	BlackboardComp->SetValueAsEnum( 
         TEXT("CurrentState"), 
-        EnumEnemyState::Range
+        EnumEnemyState::Chase
     );
 }
+
+
 
 
 
