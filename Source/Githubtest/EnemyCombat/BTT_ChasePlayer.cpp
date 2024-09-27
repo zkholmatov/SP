@@ -21,8 +21,8 @@ UBTT_ChasePlayer::UBTT_ChasePlayer()
     ControllerRef = nullptr;
     CharacterRef = nullptr;
     CachedOwnerComp = nullptr;
-    OriginalWalkSpeed = 0.0f;
-    ChaseWalkSpeed = 150.0f; // Or any appropriate speed
+    OriginalWalkSpeed = 100.0f;
+    ChaseWalkSpeed = 500.0f; // Or any appropriate speed
 }
 
 EBTNodeResult::Type UBTT_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
