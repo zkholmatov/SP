@@ -39,4 +39,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect);
+
+	// Custom event that can be overridden in Blueprints
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
+	void MySwordTraceEvent();
+
+	// Custom event that can be overridden in Blueprints
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
+	void MySwordTraceLoopEvent();
+
+	// Custom event that can be overridden in Blueprints
+	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
+	void MySwordTraceStopEvent();
 };
