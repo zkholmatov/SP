@@ -44,9 +44,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
 	void MySwordTraceEvent();
 
-	// Custom event that can be overridden in Blueprints
-	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
-	void MySwordTraceLoopEvent();
+	// // Custom event that can be overridden in Blueprints
+	// UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
+	// void SwordTraceLoopEvent();
 
 	// Custom event that can be overridden in Blueprints
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")

@@ -5,6 +5,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+
 // Sets default values
 AMyEnemy::AMyEnemy()
 {

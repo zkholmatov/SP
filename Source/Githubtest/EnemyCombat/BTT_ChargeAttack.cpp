@@ -27,57 +27,67 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 {
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
-
+    
     if (!CharacterRef)
     {
         return EBTNodeResult::Failed;
     }
-
+    
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-
+    
     if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
     {
         if (ChargeMontage)
         {
-            
-            
             ControllerRef = OwnerComp.GetAIOwner();
             float MontageDuration = CharacterRef->PlayAnimMontage(ChargeMontage);
-
+            
             AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
             if (MyEnemyRef)
             {
                 MyEnemyRef->MySwordTraceEvent();
             }
-
+            
             // Ensure the timer delegate is correctly set up to call FinishAttackTask
             FTimerDelegate TimerDel;
             TimerDel.BindUFunction(this, FName("FinishAttackTask"));
-
+            
             // Set timer for animation duration
             ControllerRef->GetWorldTimerManager().SetTimer(AttackTimerHandle, TimerDel, MontageDuration, false);
             return EBTNodeResult::InProgress;
         }
     }
-
+    
     return EBTNodeResult::Failed;
 }
 
 void UBTT_ChargeAttack::FinishAttackTask()
 {
-    if (!CachedOwnerComp)
-    {
-        return;
-    }
+    // if (!CachedOwnerComp)
+    // {
+    //     return;
+    // }
+    //
+    // UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
+    //
+    // if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
+    // {
+    //     ExecuteTask(*CachedOwnerComp, nullptr); // Replay the charge attack if the state is still Charge
+    // }
+    // else
+    // {
+    //     FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded); // Finish the task successfully if the state has changed
+    // }
 
-    UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
+    if (CachedOwnerComp)
+    {
+        AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
+        if (MyEnemyRef)
+        {
+            // Trigger the stop of the sword trace event
+            MyEnemyRef->MySwordTraceStopEvent();
+        }
 
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
-    {
-        ExecuteTask(*CachedOwnerComp, nullptr); // Replay the charge attack if the state is still Charge
-    }
-    else
-    {
-        FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded); // Finish the task successfully if the state has changed
+        FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }

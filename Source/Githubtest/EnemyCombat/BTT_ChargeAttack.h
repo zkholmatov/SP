@@ -28,7 +28,8 @@ private:
 	ACharacter* CharacterRef;
 	UBehaviorTreeComponent* CachedOwnerComp;
 
-	FTimerHandle AttackTimerHandle;
+	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
+	FTimerHandle LoopTimerHandle; // Timer handle for looping event
 
 	
 
