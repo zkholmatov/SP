@@ -10,7 +10,8 @@ ULookAtPlayerComponent::ULookAtPlayerComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	
+
+	// ...
 }
 
 
@@ -18,6 +19,8 @@ ULookAtPlayerComponent::ULookAtPlayerComponent()
 void ULookAtPlayerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// ...
 	
 }
 
@@ -30,27 +33,26 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if (!bCanRotate) {return;}
 	
-	// Retrieve a reference to enemy
+	// Retrieve a reference to the owner of this component
 	AActor* OwnerRef{ GetOwner() };
 
-	// Get the location of the enemy ie owner ref
+	// Get the location of the owner actor
 	FVector OwnerLocation = OwnerRef->GetActorLocation();
 
 	// Retrieve the first player controller in the world
 	APlayerController* PlayerController {GetWorld()->GetFirstPlayerController()};
 
-	// Get the player's pawn 
+	// Get the player's pawn (character usually controlled by the player)
 	APawn* PlayerPawn { PlayerController->GetPawn() };
+
 	// Get the location of the player's pawn
 	FVector PlayerLocation = PlayerPawn->GetActorLocation();
 
 	// Calculate the rotation that would be needed for the owner to look directly at the player
 	FRotator DesiredRotation {UKismetMathLibrary::FindLookAtRotation(OwnerLocation, PlayerLocation)};
 
-	// Get the current rotation of the enemy
 	FRotator CurrentRotation { OwnerRef->GetActorRotation() };
 
-	// Make rotation a constant speed
 	FRotator NewRotation {
 		UKismetMathLibrary::RInterpTo_Constant(
 			CurrentRotation,
@@ -59,9 +61,7 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 			speed)
 	};
 
-	// Preserve pitch and roll and apply only the yaw rotation for smoother turning
 	FRotator NewYawOnlyRotator { CurrentRotation.Pitch, NewRotation.Yaw, CurrentRotation.Roll };
 
-	// Set the new rotation to the owner actor
 	OwnerRef->SetActorRotation(NewYawOnlyRotator);
 }

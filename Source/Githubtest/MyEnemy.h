@@ -7,27 +7,22 @@
 #include "EnumEnemyState.h"
 #include "MyEnemy.generated.h"
 
-/**
- * AMyEnemy - Character class representing an enemy in the game. Manages 
- * AI state and interactions with player characters.
- */
 UCLASS()
 class GITHUBTEST_API AMyEnemy : public ACharacter
 {
 	GENERATED_BODY()
 
-	// Variable to store the initial state of the enemy, editable in the Unreal Editor, used to set the enemy's initial behavior state
+	// Variable to store the initial state of the enemy, editable in the Unreal Editor
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<EnumEnemyState> InitialState; // variable is type EnumEnemyState
+	TEnumAsByte<EnumEnemyState> InitialState;
 
-	// Pointer to the Blackboard Component used for AI state management, stores AI-relevant information such as the current state
+	// Pointer to the Blackboard Component used for AI state management
 	class UBlackboardComponent* BlackboardComp;
 
 public:
 	// Sets default values for this character's properties
 	AMyEnemy();
 
-	// Component to manage the enemy's static mesh, editable and readable in the Unreal Editor, used for rendering the enemy's appearance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* MeshComp;
 
@@ -36,22 +31,24 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame to update the enemy's state
+	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Function to detect another pawn, used to change the enemy's state based on proximity to other characters
 	UFUNCTION(BlueprintCallable)
 	void DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect);
 
-	// Custom event that can be overridden in Blueprints, used to handle sword trace events
+	// Custom event that can be overridden in Blueprints
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
 	void MySwordTraceEvent();
 
-	// Custom event that can be overridden in Blueprints, used to handle stopping of sword trace events
+	// // Custom event that can be overridden in Blueprints
+	// UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
+	// void SwordTraceLoopEvent();
+
+	// Custom event that can be overridden in Blueprints
 	UFUNCTION(BlueprintImplementableEvent, Category = "Custom")
 	void MySwordTraceStopEvent();
-	
 };

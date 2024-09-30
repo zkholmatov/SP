@@ -24,7 +24,7 @@ void AMyEnemy::BeginPlay()
 	
 	BlackboardComp->SetValueAsEnum( 
 	    TEXT("CurrentState"), 
-	    InitialState // Check details panel of enemyManny to see whta initial state is currently set to 
+	    InitialState
 	);
 }
 
@@ -32,43 +32,33 @@ void AMyEnemy::BeginPlay()
 void AMyEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 // Called to bind functionality to input
 void AMyEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
 
-// DetectPawn - Determines if the specified pawn should be detected and updates the AI state accordingly.
-// DetectedPawn - The pawn that has been detected by this enemy.
-// PawnToDetect - The specific pawn that should trigger a change in state.
+}
 
 void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 {
-	// Retrieve the current state of the enemy from the Blackboard Component.
-	// The state is initially set based on the InitialState variable and may be updated during gameplay.
-	// Current state is technically variable created with in black board
+	// Setting initial state correctly
 	EnumEnemyState CurrentState = static_cast<EnumEnemyState>
-	(BlackboardComp->GetValueAsEnum(TEXT("CurrentState"))); 
+	(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
 
-	// Check if the detected pawn is not the specific pawn we are interested in, or if the current state is not Idle.
-	// If either condition is true, exit the function as we are not interested in detecting this pawn or the enemy is busy in another state.
 	if (DetectedPawn != PawnToDetect || CurrentState != EnumEnemyState::Idle)
 	{
 		return;
 	}
 
-	// If the conditions above are not met, this means the enemy is currently idle and has detected the specific pawn (likely the player).
-	// Log a message to the console for debugging purposes (commented out here).
-	// UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
 	
-	// Update the Blackboard Component to change the enemy's state to 'Chase'.
-	// This triggers behavior associated with the Chase state, such as pursuing the detected pawn.
 	BlackboardComp->SetValueAsEnum( 
-		TEXT("CurrentState"), 
-		EnumEnemyState::Range
-	);
+        TEXT("CurrentState"), 
+        EnumEnemyState::Chase
+    );
 }
 
 

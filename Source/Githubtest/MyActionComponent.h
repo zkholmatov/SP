@@ -4,23 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "LookAtPlayerComponent.generated.h"
+#include "MyActionComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GITHUBTEST_API ULookAtPlayerComponent : public UActorComponent
+class GITHUBTEST_API UMyActionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere)
-	float speed {400.0f};
-
 public:	
 	// Sets default values for this component's properties
-	ULookAtPlayerComponent();
-
-	UPROPERTY(VisibleAnywhere)
-	bool bCanRotate = false;
+	UMyActionComponent();
 
 protected:
 	// Called when the game starts
