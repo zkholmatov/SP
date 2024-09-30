@@ -29,7 +29,6 @@ private:
 	UBehaviorTreeComponent* CachedOwnerComp;
 
 	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
-	FTimerHandle LoopTimerHandle; // Timer handle for looping event
 
 	
 
