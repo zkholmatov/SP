@@ -12,13 +12,15 @@ class GITHUBTEST_API ULookAtPlayerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	// Speed at which the actor rotates to face the player
 	UPROPERTY(EditAnywhere)
-	float speed {400.0f};
+	float speed {650.0f};
 
 public:	
 	// Sets default values for this component's properties
 	ULookAtPlayerComponent();
 
+	// Flag to determine if the component should rotate the actor
 	UPROPERTY(VisibleAnywhere)
 	bool bCanRotate = false;
 
@@ -29,6 +31,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	
 };

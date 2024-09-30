@@ -13,14 +13,26 @@ UCLASS()
 class GITHUBTEST_API UBTT_RangeAttack : public UBTTaskNode
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* AnimMontage;
-
-	double Threshold{ 0.9 };
-
+    
 public:
+	UBTT_RangeAttack();
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-	
+
+	UFUNCTION()
+	void FinishAttackTask();
+
+	UPROPERTY(EditAnywhere, Category = "Range")
+	UAnimMontage* RangeMontage;
+
+protected:
+	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
+
+private:
+	AAIController* ControllerRef;
+	ACharacter* CharacterRef;
+	UBehaviorTreeComponent* CachedOwnerComp;
+
+	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
 };
 
