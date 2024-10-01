@@ -3,11 +3,11 @@
 
 #include "BTT_ChargeAttack.h"
 #include "AIController.h"
-#include "Githubtest/MyEnemyAnimInstance.h"
+// #include "Githubtest/MyEnemyAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Navigation/PathFollowingComponent.h"
+// #include "GameFramework/CharacterMovementComponent.h"
+// #include "Navigation/PathFollowingComponent.h"
 #include "Githubtest/EnumEnemyState.h"
 #include "Githubtest/MyEnemy.h"
 
@@ -25,39 +25,44 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
 
 EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    // Cache owner and character for further usage
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
-    
-    if (!CharacterRef)
-    {
-        return EBTNodeResult::Failed;
-    }
-    
+
+    if (!CharacterRef){ return EBTNodeResult::Failed; }
+
+    // Get the Blackboard component
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    
+
+    // Verify the state is correctly set to Charge
     if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
     {
+        // Ensure we have a valid animation montage
         if (ChargeMontage)
         {
+            // Play the charge attack montage
             ControllerRef = OwnerComp.GetAIOwner();
-            float MontageDuration = CharacterRef->PlayAnimMontage(ChargeMontage);
-            
+            CharacterRef->PlayAnimMontage(ChargeMontage);
+
+            // Fire sword trace event if applicable
             AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
             if (MyEnemyRef)
             {
                 MyEnemyRef->MySwordTraceEvent();
             }
-            
-            // Ensure the timer delegate is correctly set up to call FinishAttackTask
-            FTimerDelegate TimerDel;
-            TimerDel.BindUFunction(this, FName("FinishAttackTask"));
-            
-            // Set timer for animation duration
-            ControllerRef->GetWorldTimerManager().SetTimer(AttackTimerHandle, TimerDel, MontageDuration, false);
+
+            // Set up a timer to complete the task after the animation duration
+            CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+                AttackTimerHandle, [this]()
+                {
+                    FinishAttackTask();
+                },
+                ChargeMontage->GetPlayLength(), false);
+
             return EBTNodeResult::InProgress;
         }
     }
-    
+
     return EBTNodeResult::Failed;
 }
 
