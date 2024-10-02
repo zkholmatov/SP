@@ -44,12 +44,12 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
             ControllerRef = OwnerComp.GetAIOwner();
             CharacterRef->PlayAnimMontage(ChargeMontage);
 
-            // Fire sword trace event if applicable
-            AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-            if (MyEnemyRef)
-            {
-                MyEnemyRef->MySwordTraceEvent();
-            }
+            // // Fire sword trace event if applicable
+            // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
+            // if (MyEnemyRef)
+            // {
+            //     MyEnemyRef->MySwordTraceEvent();
+            // }
 
             // Set up a timer to complete the task after the animation duration
             CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
@@ -86,12 +86,12 @@ void UBTT_ChargeAttack::FinishAttackTask()
 
     if (CachedOwnerComp)
     {
-        AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-        if (MyEnemyRef)
-        {
-            // Trigger the stop of the sword trace event
-            MyEnemyRef->MySwordTraceStopEvent();
-        }
+        // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
+        // if (MyEnemyRef)
+        // {
+        //     // Trigger the stop of the sword trace event
+        //     MyEnemyRef->MySwordTraceStopEvent();
+        // }
 
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
