@@ -3,13 +3,10 @@
 
 #include "BTT_ChargeAttack.h"
 #include "AIController.h"
-// #include "Githubtest/MyEnemyAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
-// #include "GameFramework/CharacterMovementComponent.h"
-// #include "Navigation/PathFollowingComponent.h"
 #include "Githubtest/EnumEnemyState.h"
-#include "Githubtest/MyEnemy.h"
+
 
 UBTT_ChargeAttack::UBTT_ChargeAttack()
 {

@@ -67,10 +67,28 @@ void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 	// This triggers behavior associated with the Chase state, such as pursuing the detected pawn.
 	BlackboardComp->SetValueAsEnum( 
 		TEXT("CurrentState"), 
-		EnumEnemyState::Range
+		EnumEnemyState::Range // needs to be swapped to hesitate
 	);
 }
 
+// Implement the SetEnemyState function
+void AMyEnemy::SetEnemyState(EnumEnemyState NewState)
+{
+	if (BlackboardComp)
+	{	
+		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), NewState);
+		if (NewState == EnumEnemyState::Death)
+		{
+			GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AMyEnemy::DestroyEnemy, 5.0f, false);
+		}
+	}
+}
+
+// Implement the DestroyEnemy function
+void AMyEnemy::DestroyEnemy()
+{
+	Destroy();
+}
 
 
 

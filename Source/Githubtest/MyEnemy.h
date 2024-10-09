@@ -23,6 +23,8 @@ class GITHUBTEST_API AMyEnemy : public ACharacter
 	// Pointer to the Blackboard Component used for AI state management, stores AI-relevant information such as the current state
 	class UBlackboardComponent* BlackboardComp;
 
+	FTimerHandle DestroyTimerHandle;
+
 public:
 	// Sets default values for this character's properties
 	AMyEnemy();
@@ -56,5 +58,13 @@ public:
 	// Custom event that can be overridden in Blueprints, used to handle stopping of sword trace events
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Custom")
 	void MySwordTraceStopEvent();
-	
+
+	UBlackboardComponent* GetBlackboardComponent() const { return BlackboardComp; }
+
+	// Function to set the enemy state
+	UFUNCTION(BlueprintCallable)
+	void SetEnemyState(EnumEnemyState NewState);
+
+	/** Function to destroy the enemy */
+	void DestroyEnemy();
 };
