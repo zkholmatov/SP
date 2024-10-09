@@ -4,19 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTT_SlashAttack.generated.h"
+#include "BTT_CloseCombat.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GITHUBTEST_API UBTT_SlashAttack : public UBTTaskNode
+class GITHUBTEST_API UBTT_CloseCombat : public UBTTaskNode
 {
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere)
-	UAnimMontage* AnimMontage;
-
+	UAnimMontage* CloseCombatMontage;
 public:
+	UBTT_CloseCombat();
+	
+protected:
+	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	
 };
