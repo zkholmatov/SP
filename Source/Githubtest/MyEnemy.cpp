@@ -59,7 +59,7 @@ void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 		return;
 	}
 
-	// If the conditions above are not met, this means the enemy is currently idle and has detected the specific pawn (likely the player).
+	// If the conditions above are not met, this means the enemy is currently idle and has detected the specific pawn 
 	// Log a message to the console for debugging purposes (commented out here).
 	// UE_LOG(LogTemp, Warning, TEXT("Player Detected!"));
 	
@@ -67,7 +67,7 @@ void AMyEnemy::DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect)
 	// This triggers behavior associated with the Chase state, such as pursuing the detected pawn.
 	BlackboardComp->SetValueAsEnum( 
 		TEXT("CurrentState"), 
-		EnumEnemyState::Range // needs to be swapped to hesitate
+		EnumEnemyState::Chase // needs to be swapped to Chase
 	);
 }
 

@@ -18,6 +18,9 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
     CharacterRef = nullptr;
     CachedOwnerComp = nullptr;
     ChargeMontage = nullptr;
+
+    AttackCounter = 0;
+    MaxAttacks = FMath::RandRange(2, 4);
 }
 
 EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -40,7 +43,7 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
             // Play the charge attack montage
             ControllerRef = OwnerComp.GetAIOwner();
             CharacterRef->PlayAnimMontage(ChargeMontage);
-
+            AttackCounter++;
             // // Fire sword trace event if applicable
             // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
             // if (MyEnemyRef)
@@ -89,7 +92,16 @@ void UBTT_ChargeAttack::FinishAttackTask()
         //     // Trigger the stop of the sword trace event
         //     MyEnemyRef->MySwordTraceStopEvent();
         // }
-
+        UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
+        if (AttackCounter >= MaxAttacks)
+        {
+            BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
+            AttackCounter = 0;  
+        }
+        
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }
+
+
+

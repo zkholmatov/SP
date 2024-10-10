@@ -20,6 +20,11 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Charge")
 	UAnimMontage* ChargeMontage;
+	
+	int AttackCounter;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
+	int MaxAttacks; 
 protected:
 	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
 
@@ -29,5 +34,6 @@ private:
 	UBehaviorTreeComponent* CachedOwnerComp;
 
 	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
+
 	
 };

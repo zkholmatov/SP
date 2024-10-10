@@ -17,16 +17,20 @@ class GITHUBTEST_API UMyEnemyAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 protected:
-	// Stores the current velocity of the enemy. Editable and readable
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
-	float currentVelocity{0.0f};
+	// // Stores the current velocity of the enemy. Editable and readable
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
+	// float currentVelocity{0.0f};
 
 public:
-	// Indicates whether the enemy is currently chasing the player. 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
-	bool bIsChasing{ false };
+	// // Indicates whether the enemy is currently chasing the player
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
+	// bool bIsChasing{ false };
 	
-	// Indicates whether the enemy is currently attacking the player. 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
-	bool bIsAttacking{ false };	
+	// // Indicates whether the enemy is currently attacking the player
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
+	// bool bIsAttacking{ false };
+
+	// // Indicates whether the enemy is currently hesitating  
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "variables")
+	// bool bIsHesitating{ false };
 };

@@ -49,25 +49,25 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	// Update state only if the current state is not 'Death'
 	if (CurrentState != EnumEnemyState::Death)
 	{
-		if (DistanceToPlayer <= ChargeDistance)
+		if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChargeDistance )
 		{
 			// UE_LOG(LogTemp, Log, TEXT("Setting State to Charge"));
 			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Charge));
 		}
-		else if (DistanceToPlayer <= ChaseDistance)
+		else if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChaseDistance)
 		{
 			// UE_LOG(LogTemp, Log, TEXT("Setting State to Chase"));
 			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
 		}
-		else if (DistanceToPlayer <= RangeDistance)
-		{
-			// UE_LOG(LogTemp, Log, TEXT("Setting State to Range"));
-			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Range));
-		}
 		else
 		{
 			// UE_LOG(LogTemp, Log, TEXT("Setting State to Idle"));
-			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Idle));
+			BlackboardComp->SetValueAsEnum(TEXT("CurrentState" ), static_cast<uint8>(EnumEnemyState::Idle));
 		}
+		// else if (DistanceToPlayer <= RangeDistance)
+		// {
+		// 	// UE_LOG(LogTemp, Log, TEXT("Setting State to Range"));
+		// 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Range));
+		// }
 	}
 }
