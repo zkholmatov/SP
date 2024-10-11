@@ -2,7 +2,7 @@
 
 
 #include "MyCCombatNotifyState.h"
-#include "Githubtest/MyEnemy.h"
+#include "Githubtest/Enemy/MyEnemy.h"
 
    void UMyCCombatNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
    {

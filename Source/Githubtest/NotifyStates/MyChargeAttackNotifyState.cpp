@@ -2,7 +2,7 @@
 
 
 #include "MyChargeAttackNotifyState.h"
-#include "Githubtest/MyEnemy.h"
+#include "Githubtest/Enemy/MyEnemy.h"
 
    void UMyChargeAttackNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
    {

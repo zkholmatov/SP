@@ -2,9 +2,9 @@
 
 
 #include "MyEnemDeathNotifyState.h"
-#include "Githubtest/MyEnemy.h"
+#include "Githubtest/Enemy/MyEnemy.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 
 void UMyEnemDeathNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {

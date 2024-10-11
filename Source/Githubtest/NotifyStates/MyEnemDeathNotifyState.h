@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "Githubtest/MyEnemy.h"
 #include "MyEnemDeathNotifyState.generated.h"
 
 /**

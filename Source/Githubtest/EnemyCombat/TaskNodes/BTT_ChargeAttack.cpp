@@ -5,7 +5,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
-#include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 
 
 UBTT_ChargeAttack::UBTT_ChargeAttack()
@@ -68,30 +68,8 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 
 void UBTT_ChargeAttack::FinishAttackTask()
 {
-    // if (!CachedOwnerComp)
-    // {
-    //     return;
-    // }
-    //
-    // UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
-    //
-    // if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
-    // {
-    //     ExecuteTask(*CachedOwnerComp, nullptr); // Replay the charge attack if the state is still Charge
-    // }
-    // else
-    // {
-    //     FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded); // Finish the task successfully if the state has changed
-    // }
-
     if (CachedOwnerComp)
     {
-        // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-        // if (MyEnemyRef)
-        // {
-        //     // Trigger the stop of the sword trace event
-        //     MyEnemyRef->MySwordTraceStopEvent();
-        // }
         UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
         if (AttackCounter >= MaxAttacks)
         {

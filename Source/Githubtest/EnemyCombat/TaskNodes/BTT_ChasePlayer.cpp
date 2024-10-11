@@ -154,7 +154,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
-#include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 #include "Navigation/PathFollowingComponent.h"
 
 

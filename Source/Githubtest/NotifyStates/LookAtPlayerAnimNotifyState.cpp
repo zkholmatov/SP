@@ -2,7 +2,7 @@
 
 
 #include "LookAtPlayerAnimNotifyState.h"
-#include "LookAtPlayerComponent.h"
+#include "Githubtest/LookAtPlayer/LookAtPlayerComponent.h"
 
 
 void ULookAtPlayerAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,

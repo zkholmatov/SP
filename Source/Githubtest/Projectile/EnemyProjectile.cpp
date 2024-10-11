@@ -83,17 +83,6 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
     {
         ParticleComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     }
-
-    // // Create a damage event for the projectile
-    // FDamageEvent ProjectileDamageEvent{};
-    //
-    // // Apply damage to the player pawn
-    // PawnRef->TakeDamage(
-    //     Damage,               // Amount of damage to apply
-    //     ProjectileDamageEvent, // Damage event
-    //     PawnRef->GetController(), // Controller responsible for the damage
-    //     this                  // Actor causing the damage
-    // );
 }
 
 // Destroys the projectile actor

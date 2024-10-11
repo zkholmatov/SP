@@ -47,9 +47,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Function to detect another pawn, used to change the enemy's state based on proximity to other characters
-	UFUNCTION(BlueprintCallable)
-	void DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect);
+	// // Function to detect another pawn, used to change the enemy's state based on proximity to other characters
+	// UFUNCTION(BlueprintCallable)
+	// void DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect);
 
 	// Custom event that can be overridden in Blueprints, used to handle sword trace events
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Custom")
