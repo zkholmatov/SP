@@ -12,7 +12,6 @@ UEnemyStateService::UEnemyStateService()
 {
 	NodeName = TEXT("Update Enemy State");
 	Interval = 0.1f;
-	retreatCounter = 0;
 }
 
 void UEnemyStateService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -50,21 +49,6 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	// Update state only if the current state is not 'Death'
 	if (CurrentState != EnumEnemyState::Death)
 	{
-		// if (CurrentState == EnumEnemyState::Retreat)
-	 //    {
-		// 	
-		// 	retreatCounter++;
-	 //        if (retreatCounter < 1)
-	 //        {
-	 //            
-	 //            return;
-	 //        }
-	 //        else
-	 //        {
-	 //            // Reset the retreat counter when finished retreating
-	 //            retreatCounter = 0;
-	 //        }
-	 //    }
 		
 		if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChargeDistance )
 		{

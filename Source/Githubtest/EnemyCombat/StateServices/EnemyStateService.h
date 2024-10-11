@@ -21,7 +21,7 @@ private:
 	const float ChargeDistance = 250.0f;
 	const float ChaseDistance = 1250.0f;
 
-	int32 retreatCounter;
-
 	void UpdateEnemyState(UBehaviorTreeComponent& OwnerComp);
+
+	
 };
