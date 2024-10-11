@@ -7,7 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 #include "Engine/World.h"
 
 
@@ -25,43 +25,53 @@ UBTT_Retreat::UBTT_Retreat()
 
 EBTNodeResult::Type UBTT_Retreat::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    // Cache owner and character for further usage
-    CachedOwnerComp = &OwnerComp;
-    CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
+    
 
-    if (!CharacterRef)
+    if (!InitializeReferences(OwnerComp))
     {
         return EBTNodeResult::Failed;
     }
 
-    // Get the Blackboard component
-    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+    // retrieves the blackboard component associated with the behavior tree component OwnerComp, which manages the execution of this task, and assigns it to the variable BlackboardComp
+    // ownerComp is a reference to the UBehaviorTreeComponent that owns and manages the execution of this particular behavior tree task node
+    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent(); 
 
-    // Verify the state is correctly set to Range
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat))
+    if (ShouldRetreat(BlackboardComp))
     {
-        // Ensure we have a valid animation montage
-        if (RetreatMontage)
-        {
-            // Play the range attack montage
-            ControllerRef = OwnerComp.GetAIOwner();
-            CharacterRef->PlayAnimMontage(RetreatMontage);
-
-            LookAtPlayer();
-
-            // Set up a timer to complete the task after the animation duration
-            CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-                RetreatTimerHandle, [this]()
-                {
-                    FinishRetreatTask();
-                },
-                RetreatMontage->GetPlayLength(), false);
-
-            return EBTNodeResult::InProgress;
-        }
+        PlayRetreatMontage();
+        return EBTNodeResult::InProgress;
     }
 
     return EBTNodeResult::Failed;
+}
+
+bool UBTT_Retreat::InitializeReferences(UBehaviorTreeComponent& OwnerComp)
+{
+    CachedOwnerComp = &OwnerComp;
+    // casts the pawn controlled by the AI owner of the behavior tree component OwnerComp to the ACharacter class and assigns it to the variable CharacterRef
+    CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
+
+    return CharacterRef != nullptr;
+}
+
+bool UBTT_Retreat::ShouldRetreat(UBlackboardComponent* BlackboardComp) const
+{
+    return BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat)
+        && RetreatMontage;
+}
+
+void UBTT_Retreat::PlayRetreatMontage()
+{
+    // assigns the AI owner of CachedOwnerComp to ControllerRef and then calls PlayAnimMontage on CharacterRef to play the animation montage
+    ControllerRef = CachedOwnerComp->GetAIOwner();
+    CharacterRef->PlayAnimMontage(RetreatMontage);
+
+    CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+        RetreatTimerHandle, [this]()
+        {
+            FinishRetreatTask();
+        },
+        RetreatMontage->GetPlayLength(), false);
 }
 
 void UBTT_Retreat::FinishRetreatTask()
@@ -70,12 +80,4 @@ void UBTT_Retreat::FinishRetreatTask()
     {
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
-}
-
-void UBTT_Retreat::LookAtPlayer()
-{
-    // Continuously turn towards the player
-    FVector PlayerLocation = CharacterRef->GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-    FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(CharacterRef->GetActorLocation(), PlayerLocation);
-    CharacterRef->SetActorRotation(LookAtRotation);
 }

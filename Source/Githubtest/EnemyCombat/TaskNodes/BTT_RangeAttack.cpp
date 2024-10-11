@@ -7,8 +7,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 // #include "Kismet/KismetMathLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Githubtest/EnumEnemyState.h"
-#include "Githubtest/MyEnemy.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
+#include "Githubtest/Enemy/MyEnemy.h"
 
 UBTT_RangeAttack::UBTT_RangeAttack()
 {
@@ -46,13 +46,6 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
             ControllerRef = OwnerComp.GetAIOwner();
             CharacterRef->PlayAnimMontage(RangeMontage);
 
-            // // Trigger range attack start event
-            // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-            // if (MyEnemyRef)
-            // {
-            //     MyEnemyRef->RangeAttackStartEvent();
-            // }
-
             // Set up a timer to complete the task after the animation duration
             CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
                 AttackTimerHandle, [this]()
@@ -72,15 +65,6 @@ void UBTT_RangeAttack::FinishAttackTask()
 {
     if (CachedOwnerComp)
     {
-        // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-        // if (MyEnemyRef)
-        // {
-        //     // Trigger the stop of the range attack event
-        //     MyEnemyRef->RangeAttackStopEvent();
-        // }
-        
-        // CharacterRef->GetCharacterMovement()->StopMovementImmediately();
-
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }

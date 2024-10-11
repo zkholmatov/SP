@@ -5,7 +5,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
-#include "Githubtest/EnumEnemyState.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 
 
 UBTT_EnemyDeath::UBTT_EnemyDeath()

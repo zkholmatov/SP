@@ -16,19 +16,16 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-	UFUNCTION()
-	void FinishRetreatTask();
-
-	UPROPERTY(EditAnywhere, Category = "Range")
+	UPROPERTY(EditAnywhere, Category = "Retreat")
 	UAnimMontage* RetreatMontage;
 
-protected:
-	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
-
-	UFUNCTION()
-	void LookAtPlayer();
-
 private:
+	// Helper functions
+	bool InitializeReferences(UBehaviorTreeComponent& OwnerComp);
+	bool ShouldRetreat(UBlackboardComponent* BlackboardComp) const;
+	void PlayRetreatMontage();
+	void FinishRetreatTask();
+	
 	AAIController* ControllerRef;
 	ACharacter* CharacterRef;
 	UBehaviorTreeComponent* CachedOwnerComp;

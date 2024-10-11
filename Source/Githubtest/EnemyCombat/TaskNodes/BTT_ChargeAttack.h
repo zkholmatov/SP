@@ -23,7 +23,6 @@ public:
 	
 	int AttackCounter;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Charge")
 	int MaxAttacks; 
 protected:
 	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};

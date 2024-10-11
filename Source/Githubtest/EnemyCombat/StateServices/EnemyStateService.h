@@ -19,8 +19,9 @@ protected:
 
 private:
 	const float ChargeDistance = 250.0f;
-	const float ChaseDistance = 850.0f; 
-	const float RangeDistance = 1200.0f;
+	const float ChaseDistance = 1250.0f;
 
 	void UpdateEnemyState(UBehaviorTreeComponent& OwnerComp);
+
+	
 };
