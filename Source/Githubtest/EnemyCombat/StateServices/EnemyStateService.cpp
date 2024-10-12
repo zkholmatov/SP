@@ -43,13 +43,19 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	    return;
 	}
 
+	bool isRetreating = false;
+	
+
 	// Get the current state from the blackboard
 	EnumEnemyState CurrentState = static_cast<EnumEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
+	if (CurrentState != EnumEnemyState::Retreat)
+	{
+		isRetreating = true;
+	}
 
 	// Update state only if the current state is not 'Death'
-	if (CurrentState != EnumEnemyState::Death)
+	if (CurrentState != EnumEnemyState::Death || /* NOT RETREATING*/!isRetreating)
 	{
-		
 		if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChargeDistance )
 		{
 			// UE_LOG(LogTemp, Log, TEXT("Setting State to Charge"));
@@ -62,11 +68,15 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 			
 			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
 		}
-		else
+		else if (DistanceToPlayer > ChargeDistance + 5)
 		{
 			// UE_LOG(LogTemp, Log, TEXT("Setting State to Idle"));
 			
 			BlackboardComp->SetValueAsEnum(TEXT("CurrentState" ), static_cast<uint8>(EnumEnemyState::Idle));
 		}
+		// else
+		// {
+		// 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
+		// }
 	}
 }

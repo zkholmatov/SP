@@ -20,7 +20,7 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
     ChargeMontage = nullptr;
 
     AttackCounter = 0;
-    MaxAttacks = FMath::RandRange(2, 4);
+    MaxAttacks = FMath::RandRange(2, 8);
 }
 
 EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
