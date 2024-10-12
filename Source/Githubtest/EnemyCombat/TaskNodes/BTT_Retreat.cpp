@@ -58,6 +58,7 @@ bool UBTT_Retreat::ShouldRetreat(UBlackboardComponent* BlackboardComp) const
 {
     return BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat)
         && RetreatMontage;
+    
 }
 
 void UBTT_Retreat::PlayRetreatMontage()
@@ -65,6 +66,7 @@ void UBTT_Retreat::PlayRetreatMontage()
     // assigns the AI owner of CachedOwnerComp to ControllerRef and then calls PlayAnimMontage on CharacterRef to play the animation montage
     ControllerRef = CachedOwnerComp->GetAIOwner();
     CharacterRef->PlayAnimMontage(RetreatMontage);
+    // ControllerRef->SetFocus();
 
     CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
         RetreatTimerHandle, [this]()
