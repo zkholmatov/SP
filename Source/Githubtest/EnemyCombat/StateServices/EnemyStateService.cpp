@@ -44,6 +44,7 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	}
 
 	bool isRetreating = false;
+	bool isStunned = false;
 	
 
 	// Get the current state from the blackboard
@@ -52,9 +53,14 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	{
 		isRetreating = true;
 	}
+	
+    if (CurrentState != EnumEnemyState::Stunned)
+    {
+    	isStunned = true;
+    }
 
 	// Update state only if the current state is not 'Death'
-	if (CurrentState != EnumEnemyState::Death || /* NOT RETREATING*/!isRetreating)
+	if (CurrentState != EnumEnemyState::Death || !isStunned || /* NOT RETREATING*/!isRetreating)
 	{
 		if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChargeDistance )
 		{

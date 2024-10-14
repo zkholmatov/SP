@@ -15,7 +15,7 @@ enum EnumEnemyState
 	Chase UMETA(DisplayName = "Chase"),
 	CloseCombat UMETA(DisplayName = "CloseCombat"),
 	Death UMETA(DisplayName = "Death"),
-	Retreat UMETA(DisplayName = "Retreat")
-	
+	Retreat UMETA(DisplayName = "Retreat"),
+	Stunned UMETA(DisplayName = "Stunned")
 	
 };

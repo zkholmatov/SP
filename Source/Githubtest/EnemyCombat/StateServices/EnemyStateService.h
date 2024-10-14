@@ -18,7 +18,7 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	const float ChargeDistance = 250.0f;
+	const float ChargeDistance = 150.0f;
 	const float ChaseDistance = 1250.0f;
 
 	void UpdateEnemyState(UBehaviorTreeComponent& OwnerComp);
