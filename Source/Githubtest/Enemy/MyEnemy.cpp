@@ -19,7 +19,6 @@ void AMyEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//BlackboardComp = GetController<AAIController>().GetBlackboardComponent();
 	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
 	
 	BlackboardComp->SetValueAsEnum( 
@@ -80,6 +79,22 @@ void AMyEnemy::SetEnemyState(EnumEnemyState NewState)
 		if (NewState == EnumEnemyState::Death)
 		{
 			GetWorldTimerManager().SetTimer(DestroyTimerHandle, this, &AMyEnemy::DestroyEnemy, 5.0f, false);
+		}
+	}
+}
+
+void AMyEnemy::SetTaskNodeCompleted(bool TaskNodeCompleted) // THis is only used to for special edge cases, revert to BTS_TaskNodeCompleted service for inside BT
+{
+	if (BlackboardComp)
+	{	
+		BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), TaskNodeCompleted);
+		if (TaskNodeCompleted == true)
+		{
+			BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
+		}
+		else
+		{
+			BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
 		}
 	}
 }
