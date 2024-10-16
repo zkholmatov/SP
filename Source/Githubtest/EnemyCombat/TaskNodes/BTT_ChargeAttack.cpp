@@ -20,7 +20,7 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
     ChargeMontage = nullptr;
 
     AttackCounter = 0;
-    MaxAttacks = FMath::RandRange(2, 8);
+    MaxAttacks = FMath::RandRange(3, 5);
 }
 
 EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -29,10 +29,14 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
-    if (!CharacterRef){ return EBTNodeResult::Failed; }
+    if (!CharacterRef)
+    {
+        return EBTNodeResult::Failed;
+    }
 
     // Get the Blackboard component
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+    BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
 
     // Verify the state is correctly set to Charge
     if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
@@ -44,6 +48,11 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
             ControllerRef = OwnerComp.GetAIOwner();
             CharacterRef->PlayAnimMontage(ChargeMontage);
             AttackCounter++;
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Attack Counter: %d"), AttackCounter));
+            }
+            
             // // Fire sword trace event if applicable
             // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
             // if (MyEnemyRef)
@@ -71,7 +80,12 @@ void UBTT_ChargeAttack::FinishAttackTask()
     if (CachedOwnerComp)
     {
         UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
-        if (AttackCounter >= MaxAttacks)
+        // BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
+        if (BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Stunned))
+        {
+            AttackCounter = 0;
+        }
+        else if (AttackCounter >= MaxAttacks )
         {
             BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
             AttackCounter = 0;  
