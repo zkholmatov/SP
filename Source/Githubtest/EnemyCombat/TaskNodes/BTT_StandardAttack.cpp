@@ -1,16 +1,16 @@
 
 
 
-#include "BTT_ChargeAttack.h"
+#include "BTT_StandardAttack.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "Githubtest/Enemy/EnumEnemyState.h"
 
 
-UBTT_ChargeAttack::UBTT_ChargeAttack()
+UBTT_StandardAttack::UBTT_StandardAttack()
 {
-    NodeName = "Charge Attack";
+    NodeName = "Attack";
     bNotifyTick = false; // Disable tick notification
     bCreateNodeInstance = true;
 
@@ -20,19 +20,23 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
     ChargeMontage = nullptr;
 
     AttackCounter = 0;
-    MaxAttacks = FMath::RandRange(2, 8);
+    MaxAttacks = FMath::RandRange(3, 5);
 }
 
-EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     // Cache owner and character for further usage
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
-    if (!CharacterRef){ return EBTNodeResult::Failed; }
+    if (!CharacterRef)
+    {
+        return EBTNodeResult::Failed;
+    }
 
     // Get the Blackboard component
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
+    BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
 
     // Verify the state is correctly set to Charge
     if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
@@ -44,6 +48,11 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
             ControllerRef = OwnerComp.GetAIOwner();
             CharacterRef->PlayAnimMontage(ChargeMontage);
             AttackCounter++;
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Attack Counter: %d"), AttackCounter));
+            }
+            
             // // Fire sword trace event if applicable
             // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
             // if (MyEnemyRef)
@@ -66,12 +75,17 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
     return EBTNodeResult::Failed;
 }
 
-void UBTT_ChargeAttack::FinishAttackTask()
+void UBTT_StandardAttack::FinishAttackTask()
 {
     if (CachedOwnerComp)
     {
         UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
-        if (AttackCounter >= MaxAttacks)
+        // BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
+        if (BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Stunned))
+        {
+            AttackCounter = 0;
+        }
+        else if (AttackCounter >= MaxAttacks )
         {
             BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
             AttackCounter = 0;  
