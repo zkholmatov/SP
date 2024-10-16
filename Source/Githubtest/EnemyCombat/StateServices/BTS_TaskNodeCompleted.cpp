@@ -9,6 +9,15 @@ UBTS_TaskNodeCompleted::UBTS_TaskNodeCompleted()
 	NodeName = "Task Completed Toggle";
 	Interval = 0.1f;
 }
+
+// void UBTS_TaskNodeCompleted::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+// {
+// 	Super::OnBecomeRelevant(OwnerComp, NodeMemory);
+// 	
+// 	// Toggle the TaskNodeCompleted value
+// 	TaskNodeCompleted(OwnerComp);
+// }
+
 void UBTS_TaskNodeCompleted::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

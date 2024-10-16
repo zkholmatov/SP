@@ -7,7 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
 #include "Githubtest/Enemy/EnumEnemyState.h"
-#include "Githubtest/EnemyCombat/TaskNodes/BTT_ChargeAttack.h"
+#include "Githubtest/EnemyCombat/TaskNodes/BTT_StandardAttack.h"
 
 UEnemyStateService::UEnemyStateService()
 {
@@ -48,11 +48,11 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	
 	// Get the current state from the blackboard
 	EnumEnemyState CurrentState = static_cast<EnumEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
-	bool isTaskCompleted = BlackboardComp->GetValueAsBool(TEXT("TaskNodeCompleted"));
+	bool TaskCompleted = BlackboardComp->GetValueAsBool(TEXT("TaskNodeCompleted"));
 	
 	bool isRetreatingOrStunned = (CurrentState == EnumEnemyState::Retreat) || (CurrentState == EnumEnemyState::Stunned);
 
-	if (!isRetreatingOrStunned)
+	if (TaskCompleted && !isRetreatingOrStunned) 
 	{
 		// Update state only if the current state is not 'Death'
 		if (CurrentState != EnumEnemyState::Death)

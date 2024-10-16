@@ -1,16 +1,16 @@
 
 
 
-#include "BTT_ChargeAttack.h"
+#include "BTT_StandardAttack.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "Githubtest/Enemy/EnumEnemyState.h"
 
 
-UBTT_ChargeAttack::UBTT_ChargeAttack()
+UBTT_StandardAttack::UBTT_StandardAttack()
 {
-    NodeName = "Charge Attack";
+    NodeName = "Attack";
     bNotifyTick = false; // Disable tick notification
     bCreateNodeInstance = true;
 
@@ -23,7 +23,7 @@ UBTT_ChargeAttack::UBTT_ChargeAttack()
     MaxAttacks = FMath::RandRange(3, 5);
 }
 
-EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
     // Cache owner and character for further usage
     CachedOwnerComp = &OwnerComp;
@@ -75,7 +75,7 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
     return EBTNodeResult::Failed;
 }
 
-void UBTT_ChargeAttack::FinishAttackTask()
+void UBTT_StandardAttack::FinishAttackTask()
 {
     if (CachedOwnerComp)
     {
