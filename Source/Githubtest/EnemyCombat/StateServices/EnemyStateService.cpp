@@ -7,7 +7,6 @@
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
 #include "Githubtest/Enemy/EnumEnemyState.h"
-#include "Githubtest/EnemyCombat/TaskNodes/BTT_ChargeAttack.h"
 
 UEnemyStateService::UEnemyStateService()
 {
@@ -44,35 +43,46 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	    return;
 	}
 
+	bool isRetreating = false;
+	bool isStunned = false;
 	
-	
+
 	// Get the current state from the blackboard
 	EnumEnemyState CurrentState = static_cast<EnumEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")));
-	bool isTaskCompleted = BlackboardComp->GetValueAsBool(TEXT("TaskNodeCompleted"));
-	
-	bool isRetreatingOrStunned = (CurrentState == EnumEnemyState::Retreat) || (CurrentState == EnumEnemyState::Stunned);
-
-	if (!isRetreatingOrStunned)
+	if (CurrentState != EnumEnemyState::Retreat)
 	{
-		// Update state only if the current state is not 'Death'
-		if (CurrentState != EnumEnemyState::Death)
+		isRetreating = true;
+	}
+	
+    if (CurrentState != EnumEnemyState::Stunned)
+    {
+    	isStunned = true;
+    }
+
+	// Update state only if the current state is not 'Death'
+	if (CurrentState != EnumEnemyState::Death || !isStunned || /* NOT RETREATING*/!isRetreating)
+	{
+		if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChargeDistance )
 		{
-			if (DistanceToPlayer <= ChargeDistance )
-			{
-				BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Charge));
-			}
-			else if (DistanceToPlayer <= ChaseDistance)
-			{
-				BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
-			}
-			else if (DistanceToPlayer > ChaseDistance + 5)
-			{
-				BlackboardComp->SetValueAsEnum(TEXT("CurrentState" ), static_cast<uint8>(EnumEnemyState::Idle));
-			}
-			// else
-			// {
-			// 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
-			// }
+			// UE_LOG(LogTemp, Log, TEXT("Setting State to Charge"));
+			
+			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Charge));
 		}
+		else if (CurrentState != EnumEnemyState::Retreat && DistanceToPlayer <= ChaseDistance)
+		{
+			// UE_LOG(LogTemp, Log, TEXT("Setting State to Chase"));
+			
+			BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
+		}
+		else if (DistanceToPlayer > ChargeDistance + 5)
+		{
+			// UE_LOG(LogTemp, Log, TEXT("Setting State to Idle"));
+			
+			BlackboardComp->SetValueAsEnum(TEXT("CurrentState" ), static_cast<uint8>(EnumEnemyState::Idle));
+		}
+		// else
+		// {
+		// 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
+		// }
 	}
 }

@@ -14,7 +14,7 @@
 UBTT_Retreat::UBTT_Retreat()
 {
     NodeName = TEXT("Retreat");
-    bNotifyTick = false; 
+    bNotifyTick = true; 
     bCreateNodeInstance = true;
 
     ControllerRef = nullptr;
@@ -25,6 +25,8 @@ UBTT_Retreat::UBTT_Retreat()
 
 EBTNodeResult::Type UBTT_Retreat::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    
+
     if (!InitializeReferences(OwnerComp))
     {
         return EBTNodeResult::Failed;
@@ -32,10 +34,9 @@ EBTNodeResult::Type UBTT_Retreat::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 
     // retrieves the blackboard component associated with the behavior tree component OwnerComp, which manages the execution of this task, and assigns it to the variable BlackboardComp
     // ownerComp is a reference to the UBehaviorTreeComponent that owns and manages the execution of this particular behavior tree task node
-    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
+    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent(); 
 
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat))
+    if (ShouldRetreat(BlackboardComp))
     {
         PlayRetreatMontage();
         return EBTNodeResult::InProgress;
@@ -65,8 +66,8 @@ void UBTT_Retreat::PlayRetreatMontage()
     // assigns the AI owner of CachedOwnerComp to ControllerRef and then calls PlayAnimMontage on CharacterRef to play the animation montage
     ControllerRef = CachedOwnerComp->GetAIOwner();
     CharacterRef->PlayAnimMontage(RetreatMontage);
+    // ControllerRef->SetFocus();
 
-    // Set up a timer to complete the task after the animation duration
     CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
         RetreatTimerHandle, [this]()
         {
@@ -79,11 +80,6 @@ void UBTT_Retreat::FinishRetreatTask()
 {
     if (CachedOwnerComp)
     {
-        if (UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent()) {
-            BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
-            BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
-        }
-        
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }
