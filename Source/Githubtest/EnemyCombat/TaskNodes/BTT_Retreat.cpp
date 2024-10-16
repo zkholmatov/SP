@@ -4,6 +4,7 @@
 #include "BTT_Retreat.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -87,3 +88,5 @@ void UBTT_Retreat::FinishRetreatTask()
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
 }
+
+

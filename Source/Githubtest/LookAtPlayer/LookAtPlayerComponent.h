@@ -14,7 +14,7 @@ class GITHUBTEST_API ULookAtPlayerComponent : public UActorComponent
 
 	// Speed at which the actor rotates to face the player
 	UPROPERTY(EditAnywhere)
-	float speed {1000.0f};
+	float speed {800.0f};
 
 public:	
 	// Sets default values for this component's properties
