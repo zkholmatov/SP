@@ -4,23 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
-#include "EnemyStateService.generated.h"
+#include "BTS_TaskNodeCompleted.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class GITHUBTEST_API UEnemyStateService : public UBTService
+class GITHUBTEST_API UBTS_TaskNodeCompleted : public UBTService
 {
 	GENERATED_BODY()
-    
+
 public:
-	UEnemyStateService();
+	UBTS_TaskNodeCompleted();
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-
-private:
-	const float ChargeDistance = 200.0f;
-	const float ChaseDistance = 1250.0f;
-
-	void UpdateEnemyState(UBehaviorTreeComponent& OwnerComp);
+	
+	void TaskNodeCompleted(UBehaviorTreeComponent& OwnerComp);
 };

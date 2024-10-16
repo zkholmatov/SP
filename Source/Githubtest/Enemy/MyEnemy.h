@@ -65,6 +65,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetEnemyState(EnumEnemyState NewState);
 
+	// Function to set the enemy state
+	UFUNCTION(BlueprintCallable)
+	void SetTaskNodeCompleted(bool TaskNodeCompleted);
+
 	/** Function to destroy the enemy */
 	void DestroyEnemy();
 };
