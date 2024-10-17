@@ -104,6 +104,19 @@ void AMyEnemy::DestroyEnemy()
 {
 	Destroy();
 }
+////////////////////////////////////////////////////////////////////
+void AMyEnemy::EnemyAttack_Implementation( UAnimMontage* Montage)
+{
+	Montage = AttackMontage;
+	
+	PlayAnimMontage(Montage);
+	// GetWorldTimerManager().SetTimer(AttackTimer, this, &AMyEnemy::OnAttackComplete ,Montage->GetPlayLength(), false);
+}
+
+void AMyEnemy::OnAttackComplete()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Attack animation has completed."));
+}
 
 
 

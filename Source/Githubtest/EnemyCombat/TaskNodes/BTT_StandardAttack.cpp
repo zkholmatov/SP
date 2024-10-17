@@ -53,12 +53,7 @@ EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& Own
                 GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Attack Counter: %d"), AttackCounter));
             }
             
-            // // Fire sword trace event if applicable
-            // AMyEnemy* MyEnemyRef = Cast<AMyEnemy>(CharacterRef);
-            // if (MyEnemyRef)
-            // {
-            //     MyEnemyRef->MySwordTraceEvent();
-            // }
+            
 
             // Set up a timer to complete the task after the animation duration
             CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(

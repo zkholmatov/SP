@@ -71,4 +71,20 @@ public:
 
 	/** Function to destroy the enemy */
 	void DestroyEnemy();
+
+public:
+	//VARIABLES
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VARIABLES")
+	UAnimMontage* AttackMontage;
+	
+	FTimerHandle AttackTimer;
+
+	//FUNCTIONS
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Attack")
+	void EnemyAttack(UAnimMontage* Montage);
+	virtual void EnemyAttack_Implementation(UAnimMontage* Montage);
+
+protected:
+	void OnAttackComplete(); // used for end of attack montage functionality
+	
 };
