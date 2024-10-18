@@ -19,13 +19,13 @@ public:
 	void FinishAttackTask();
 
 	UPROPERTY(EditAnywhere, Category = "Charge")
-	UAnimMontage* ChargeMontage;
+	UAnimMontage* AttackMontage;
 	
-	int AttackCounter;
-	int MaxAttacks;
+	// int AttackCounter;
+	// int MaxAttacks;
 	
 protected:
-	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
+	// virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
 
 private:
 	AAIController* ControllerRef;
