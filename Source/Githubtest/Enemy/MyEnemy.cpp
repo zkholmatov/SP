@@ -21,10 +21,10 @@ void AMyEnemy::BeginPlay()
 	
 	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
 	
-	BlackboardComp->SetValueAsEnum( 
-	    TEXT("CurrentState"), 
-	    InitialState // Check details panel of enemyManny to see whta initial state is currently set to 
-	);
+	// BlackboardComp->SetValueAsEnum( 
+	//     TEXT("CurrentState"), 
+	//     InitialState // Check details panel of enemyManny to see whta initial state is currently set to 
+	// );
 }
 
 // Called every frame
@@ -105,18 +105,18 @@ void AMyEnemy::DestroyEnemy()
 	Destroy();
 }
 ////////////////////////////////////////////////////////////////////
-void AMyEnemy::EnemyAttack_Implementation( UAnimMontage* Montage)
-{
-	Montage = AttackMontage;
-	
-	PlayAnimMontage(Montage);
-	// GetWorldTimerManager().SetTimer(AttackTimer, this, &AMyEnemy::OnAttackComplete ,Montage->GetPlayLength(), false);
-}
-
-void AMyEnemy::OnAttackComplete()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack animation has completed."));
-}
+// void AMyEnemy::EnemyAttack_Implementation( UAnimMontage* Montage)
+// {
+// 	Montage = AttackMontage;
+// 	
+// 	PlayAnimMontage(Montage);
+// 	// GetWorldTimerManager().SetTimer(AttackTimer, this, &AMyEnemy::OnAttackComplete ,Montage->GetPlayLength(), false);
+// }
+//
+// void AMyEnemy::OnAttackComplete()
+// {
+// 	UE_LOG(LogTemp, Warning, TEXT("Attack animation has completed."));
+// }
 
 
 
