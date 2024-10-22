@@ -8,65 +8,65 @@
 #include "Githubtest/Enemy/EnumEnemyState.h"
 
 
-UBTT_StandardAttack::UBTT_StandardAttack()
-{
-    NodeName = "Attack";
-    bNotifyTick = false; // Disable tick notification
-    bCreateNodeInstance = true;
-
-    // ControllerRef = nullptr;
-    CharacterRef = nullptr;
-    // CachedOwnerComp = nullptr;
-    // ChargeMontage = nullptr;
-
-    // AttackCounter = 0;
-    // MaxAttacks = FMath::RandRange(3, 5);
-}
-
-EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-{
-    // Cache owner and character for further usage
-    CachedOwnerComp = &OwnerComp;
-    CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
-
-    if (!CharacterRef)
-    {
-        return EBTNodeResult::Failed;
-    }
-    
-    // Ensure we have a valid animation montage
-    if (AttackMontage)
-    {
-        // Play the charge attack montage
-        ControllerRef = OwnerComp.GetAIOwner();
-        CharacterRef->PlayAnimMontage(AttackMontage);
-
-        // Set up a timer to complete the task after the animation duration
-        CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-            AttackTimerHandle, [this]()
-            {
-                FinishAttackTask();
-            },
-            AttackMontage->GetPlayLength(), false);
-
-        return EBTNodeResult::InProgress;
-    }
-    
-
-    return EBTNodeResult::Failed;
-}
-
-void UBTT_StandardAttack::FinishAttackTask()
-{
-    if (CachedOwnerComp)
-    {
-        FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
-    }
-    else if (GEngine)
-        {
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CachedOwnerComp is null"));
-        }
-}
+// UBTT_StandardAttack::UBTT_StandardAttack()
+// {
+//     NodeName = "Attack";
+//     bNotifyTick = false; // Disable tick notification
+//     bCreateNodeInstance = true;
+//
+//     // ControllerRef = nullptr;
+//     CharacterRef = nullptr;
+//     // CachedOwnerComp = nullptr;
+//     // ChargeMontage = nullptr;
+//
+//     // AttackCounter = 0;
+//     // MaxAttacks = FMath::RandRange(3, 5);
+// }
+//
+// EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+// {
+//     // Cache owner and character for further usage
+//     CachedOwnerComp = &OwnerComp;
+//     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
+//
+//     if (!CharacterRef)
+//     {
+//         return EBTNodeResult::Failed;
+//     }
+//     
+//     // Ensure we have a valid animation montage
+//     if (AttackMontage)
+//     {
+//         // Play the charge attack montage
+//         ControllerRef = OwnerComp.GetAIOwner();
+//         CharacterRef->PlayAnimMontage(AttackMontage);
+//
+//         // Set up a timer to complete the task after the animation duration
+//         CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+//             AttackTimerHandle, [this]()
+//             {
+//                 FinishAttackTask();
+//             },
+//             AttackMontage->GetPlayLength(), false);
+//
+//         return EBTNodeResult::InProgress;
+//     }
+//     
+//
+//     return EBTNodeResult::Failed;
+// }
+//
+// void UBTT_StandardAttack::FinishAttackTask()
+// {
+//     if (CachedOwnerComp)
+//     {
+//         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
+//     }
+//     else if (GEngine)
+//         {
+//             GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CachedOwnerComp is null"));
+//         }
+// }
 
 // EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 // {
