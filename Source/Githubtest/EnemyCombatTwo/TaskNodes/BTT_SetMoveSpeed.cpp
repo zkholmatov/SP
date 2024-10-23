@@ -5,11 +5,13 @@
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/Engine.h"
+
 
 UBTT_SetMoveSpeed::UBTT_SetMoveSpeed()
 {
 	NodeName = "Set AI Speed";
-	NewSpeed = 100.0f; // Default speed
+	NewSpeed = 150.0f; // Default speed
 }
 
 EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -25,8 +27,12 @@ EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& Owner
 	{
 		return EBTNodeResult::Failed;
 	}
-
-	AICharacter->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-
+	
+	UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
+	MovementComponent->MaxWalkSpeed = NewSpeed;
+	// AICharacter->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("This task node succeeded"));
+	// }
 	return EBTNodeResult::Succeeded;
 }
