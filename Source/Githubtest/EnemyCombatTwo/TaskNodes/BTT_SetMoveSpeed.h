@@ -18,7 +18,7 @@ public:
 	UBTT_SetMoveSpeed();
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UPROPERTY(EditAnywhere, Category = "AI")
 	float NewSpeed;
 
 protected:
