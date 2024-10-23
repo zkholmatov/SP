@@ -19,8 +19,7 @@ UBTT_StandardAttack::UBTT_StandardAttack()
     // CachedOwnerComp = nullptr;
     // ChargeMontage = nullptr;
 
-    // AttackCounter = 0;
-    // MaxAttacks = FMath::RandRange(3, 5);
+    
 }
 
 EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -63,9 +62,9 @@ void UBTT_StandardAttack::FinishAttackTask()
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }
     else if (GEngine)
-        {
+    {
             GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CachedOwnerComp is null"));
-        }
+    }
 }
 
 // EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
