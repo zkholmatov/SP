@@ -30,9 +30,6 @@ EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& Owner
 	
 	UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
 	MovementComponent->MaxWalkSpeed = NewSpeed;
-	// AICharacter->GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
-	// {
-	// 	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("This task node succeeded"));
-	// }
+	
 	return EBTNodeResult::Succeeded;
 }
