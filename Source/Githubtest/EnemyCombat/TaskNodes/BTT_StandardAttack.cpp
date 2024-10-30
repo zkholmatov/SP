@@ -11,7 +11,7 @@
 UBTT_StandardAttack::UBTT_StandardAttack()
 {
     NodeName = "Attack";
-    bNotifyTick = false; // Disable tick notification
+    bNotifyTick = true; // Disable tick notification
     bCreateNodeInstance = true;
 
     // ControllerRef = nullptr;
@@ -24,7 +24,7 @@ UBTT_StandardAttack::UBTT_StandardAttack()
 
 EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    // Cache owner and character for further usage
+    // cache owner and character for further usage
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
@@ -42,21 +42,21 @@ EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& Own
 
         // Set up a timer to complete the task after the animation duration
         CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-            AttackTimerHandle, [this]()
-            {
-                FinishAttackTask();
-            },
-            AttackMontage->GetPlayLength(), false);
-
+        AttackTimerHandle, [this]()
+        {
+            FinishAttackTask();
+        },
+        AttackMontage->GetPlayLength(), false);
+        
         return EBTNodeResult::InProgress;
     }
     
-
     return EBTNodeResult::Failed;
 }
 
 void UBTT_StandardAttack::FinishAttackTask()
 {
+    
     if (CachedOwnerComp)
     {
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
