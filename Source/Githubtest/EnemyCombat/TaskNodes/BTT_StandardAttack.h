@@ -18,14 +18,8 @@ public:
 	UFUNCTION()
 	void FinishAttackTask();
 
-	UPROPERTY(EditAnywhere, Category = "Charge")
+	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackMontage;
-	
-	// int AttackCounter;
-	// int MaxAttacks;
-	
-protected:
-	// virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
 
 private:
 	AAIController* ControllerRef;
@@ -34,9 +28,5 @@ private:
 
 	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
 
-
-	
-
-	
 	
 };
