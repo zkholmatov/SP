@@ -32,32 +32,25 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
     {
         return EBTNodeResult::Failed;
     }
-
-    // Get the Blackboard component
-    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-
-    // Verify the state is correctly set to Range
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Range))
+    
+    // Ensure we have a valid animation montage
+    if (RangeMontage)
     {
-        // Ensure we have a valid animation montage
-        if (RangeMontage)
-        {
-            // Play the range attack montage
-            ControllerRef = OwnerComp.GetAIOwner();
-            CharacterRef->PlayAnimMontage(RangeMontage);
+        // Play the range attack montage
+        ControllerRef = OwnerComp.GetAIOwner();
+        CharacterRef->PlayAnimMontage(RangeMontage);
 
-            // Set up a timer to complete the task after the animation duration
-            CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-                AttackTimerHandle, [this]()
-                {
-                    FinishAttackTask();
-                },
-                RangeMontage->GetPlayLength(), false);
+        // Set up a timer to complete the task after the animation duration
+        CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+            AttackTimerHandle, [this]()
+            {
+                FinishAttackTask();
+            },
+            RangeMontage->GetPlayLength(), false);
 
-            return EBTNodeResult::InProgress;
-        }
+        return EBTNodeResult::InProgress;
     }
-
+    
     return EBTNodeResult::Failed;
 }
 

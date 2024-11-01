@@ -11,11 +11,15 @@
 UBTT_SetMoveSpeed::UBTT_SetMoveSpeed()
 {
 	NodeName = "Set AI Speed";
-	NewSpeed = 150.0f; // Default speed
+	// NewSpeed = FMath::RandRange(275,400); // default speed
 }
 
 EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	SpeedLimit = FMath::RandRange(275,400);
+	NewSpeed = SpeedLimit;
+	UE_LOG(LogTemp, Error, TEXT("Speed: %f"), NewSpeed);
+	
 	AAIController* AIOwner = OwnerComp.GetAIOwner();
 	if (!AIOwner)
 	{
