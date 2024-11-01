@@ -21,18 +21,9 @@ public:
 
 	UFUNCTION()
 	void FinishAttackTask();
-
-	// UFUNCTION()
-	// void PlaySecondMontage();
 	
 	UPROPERTY(EditAnywhere, Category = "Charge")
 	UAnimMontage* StunnedMontage;
-
-	// UPROPERTY(EditAnywhere, Category = "Charge")
-	// UAnimMontage* StunnedMontageTwo;
-
-protected:
-	virtual void OnGameplayTaskActivated(UGameplayTask & Task) override {};
 
 private:
 	AAIController* ControllerRef;

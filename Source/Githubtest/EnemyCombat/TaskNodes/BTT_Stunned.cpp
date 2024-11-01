@@ -18,12 +18,11 @@ UBTT_Stunned::UBTT_Stunned()
     CharacterRef = nullptr;
     CachedOwnerComp = nullptr;
     StunnedMontage = nullptr;
-    // StunnedMontageTwo = nullptr;
 }
 
 EBTNodeResult::Type UBTT_Stunned::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    // Cache owner and character for further usage
+    // cache owner and character for further usage
     CachedOwnerComp = &OwnerComp;
     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
@@ -34,66 +33,39 @@ EBTNodeResult::Type UBTT_Stunned::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 
     // Get the Blackboard component
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
-
-    // Verify the state is correctly set to Charge
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Stunned))
+    // BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
+    
+    // Ensure we have a valid animation montage
+    if (StunnedMontage)
     {
-        // Ensure we have a valid animation montage
-        if (StunnedMontage)
-        {
-            // Play the stunned montage
-            ControllerRef = OwnerComp.GetAIOwner();
-            CharacterRef->PlayAnimMontage(StunnedMontage);
-            // CharacterRef->PlayAnimMontage(StunnedMontageTwo);
-            
-            // Set up a timer to complete the task after the animation duration
-            CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-                StunnedTimerHandle, [this]()
-                {
-                    // PlaySecondMontage();
-                    FinishAttackTask();
-                },
-                StunnedMontage->GetPlayLength(), false);
+        // Play the stunned montage
+        ControllerRef = OwnerComp.GetAIOwner();
+        CharacterRef->PlayAnimMontage(StunnedMontage);
+        
+        // Set up a timer to complete the task after the animation duration
+        CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+            StunnedTimerHandle, [this]()
+            {
+                // PlaySecondMontage();
+                FinishAttackTask();
+            },
+            StunnedMontage->GetPlayLength(), false);
 
-            return EBTNodeResult::InProgress;
-        }
+        return EBTNodeResult::InProgress;
     }
-    // BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
+    
 
     return EBTNodeResult::Failed;
 }
-
-// void UBTT_Stunned::PlaySecondMontage()
-// {
-//     if (StunnedMontageTwo)
-//     {
-//         // Play the second stunned montage
-//         CharacterRef->PlayAnimMontage(StunnedMontageTwo);
-//
-//         // Set up a timer to complete the task after the second montage completes
-//         CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-//             StunnedTimerHandle, 
-//             [this]()
-//             {
-//                 FinishAttackTask();
-//             }, 
-//             StunnedMontageTwo->GetPlayLength(), false);
-//     }
-//     else
-//     {
-//         FinishAttackTask();
-//     }
-// }
 
 void UBTT_Stunned::FinishAttackTask()
 {
     if (CachedOwnerComp)
     {
         UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
-        BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
+        // BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
         
-        BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
+        // BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
         
         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
     }

@@ -16,20 +16,18 @@ public:
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
+	UFUNCTION()
+	void FinishRetreatTask();
+	
 	UPROPERTY(EditAnywhere, Category = "Retreat")
 	UAnimMontage* RetreatMontage;
 
 private:
-	// Helper functions
-	bool InitializeReferences(UBehaviorTreeComponent& OwnerComp);
-	bool ShouldRetreat(UBlackboardComponent* BlackboardComp) const;
-	void PlayRetreatMontage();
-	void FinishRetreatTask();
 	
 	AAIController* ControllerRef;
 	ACharacter* CharacterRef;
 	UBehaviorTreeComponent* CachedOwnerComp;
 
-	FTimerHandle RetreatTimerHandle;
+	FTimerHandle RetreatTimerHandle; // Timer handle for retreat finish
 	
 };

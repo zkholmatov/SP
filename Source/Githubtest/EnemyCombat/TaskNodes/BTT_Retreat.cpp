@@ -12,81 +12,61 @@
 #include "Engine/World.h"
 
 
+
 UBTT_Retreat::UBTT_Retreat()
 {
-    NodeName = TEXT("Retreat");
-    bNotifyTick = false; 
-    bCreateNodeInstance = true;
+	NodeName = TEXT("Retreating");
+	bNotifyTick = false;
+	bCreateNodeInstance = true;
 
-    ControllerRef = nullptr;
-    CharacterRef = nullptr;
-    CachedOwnerComp = nullptr;
-    RetreatMontage = nullptr;
+	ControllerRef = nullptr;
+	CharacterRef = nullptr;
+	CachedOwnerComp = nullptr;
+	RetreatMontage = nullptr;
 }
 
 EBTNodeResult::Type UBTT_Retreat::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    if (!InitializeReferences(OwnerComp))
-    {
-        return EBTNodeResult::Failed;
-    }
+	// Cache owner and character for further usage
+	CachedOwnerComp = &OwnerComp;
+	// casts the pawn controlled by the AI owner of the behavior tree
+	// component OwnerComp to the ACharacter class and assigns it to the variable CharacterRef
+	CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
-    // retrieves the blackboard component associated with the behavior tree component OwnerComp, which manages the execution of this task, and assigns it to the variable BlackboardComp
-    // ownerComp is a reference to the UBehaviorTreeComponent that owns and manages the execution of this particular behavior tree task node
-    UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-    BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
-
-    if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat))
-    {
-        PlayRetreatMontage();
-        return EBTNodeResult::InProgress;
-    }
-
-    return EBTNodeResult::Failed;
-}
-
-bool UBTT_Retreat::InitializeReferences(UBehaviorTreeComponent& OwnerComp)
-{
-    CachedOwnerComp = &OwnerComp;
-    // casts the pawn controlled by the AI owner of the behavior tree component OwnerComp to the ACharacter class and assigns it to the variable CharacterRef
-    CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
-
-    return CharacterRef != nullptr;
-}
-
-bool UBTT_Retreat::ShouldRetreat(UBlackboardComponent* BlackboardComp) const
-{
-    return BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Retreat)
-        && RetreatMontage;
+	if (!CharacterRef)
+	{
+		return EBTNodeResult::Failed;
+	}
     
-}
+	// Ensure we have a valid animation montage
+	if (RetreatMontage)
+	{
+		// Play the retreat montage
+		ControllerRef = OwnerComp.GetAIOwner();
+		CharacterRef->PlayAnimMontage(RetreatMontage);
 
-void UBTT_Retreat::PlayRetreatMontage()
-{
-    // assigns the AI owner of CachedOwnerComp to ControllerRef and then calls PlayAnimMontage on CharacterRef to play the animation montage
-    ControllerRef = CachedOwnerComp->GetAIOwner();
-    CharacterRef->PlayAnimMontage(RetreatMontage);
-
-    // Set up a timer to complete the task after the animation duration
-    CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-        RetreatTimerHandle, [this]()
-        {
-            FinishRetreatTask();
-        },
-        RetreatMontage->GetPlayLength(), false);
+		// Set up a timer to complete the task after the animation duration
+		CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
+		RetreatTimerHandle, [this]()
+		{
+			FinishRetreatTask();
+		},
+		RetreatMontage->GetPlayLength(), false);
+        
+		return EBTNodeResult::InProgress;
+	}
+    
+	return EBTNodeResult::Failed;
 }
 
 void UBTT_Retreat::FinishRetreatTask()
 {
-    if (CachedOwnerComp)
-    {
-        if (UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent()) {
-            BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
-            BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Chase));
-        }
-        
-        FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
-    }
+	if (CachedOwnerComp)
+	{
+		FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
+	}
+	else if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CachedOwnerComp is null"));
+	}
 }
-
-
