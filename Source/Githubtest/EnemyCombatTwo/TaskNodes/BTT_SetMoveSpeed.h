@@ -21,6 +21,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float NewSpeed;
 
+	float SpeedLimit;
+
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

@@ -11,15 +11,13 @@
 UBTT_StandardAttack::UBTT_StandardAttack()
 {
     NodeName = "Attack";
-    bNotifyTick = true; // Disable tick notification
+    bNotifyTick = false; // Disable tick notification
     bCreateNodeInstance = true;
 
-    // ControllerRef = nullptr;
+    ControllerRef = nullptr;
     CharacterRef = nullptr;
-    // CachedOwnerComp = nullptr;
-    // ChargeMontage = nullptr;
-
-    
+    CachedOwnerComp = nullptr;
+    AttackMontage = nullptr;
 }
 
 EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -66,73 +64,3 @@ void UBTT_StandardAttack::FinishAttackTask()
             GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("CachedOwnerComp is null"));
     }
 }
-
-// EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
-// {
-//     // Cache owner and character for further usage
-//     CachedOwnerComp = &OwnerComp;
-//     CharacterRef = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetPawn());
-//
-//     if (!CharacterRef)
-//     {
-//         return EBTNodeResult::Failed;
-//     }
-//
-//     // Get the Blackboard component
-//     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
-//     BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), false);
-//
-//     // Verify the state is correctly set to Charge
-//     if (BlackboardComp && BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Charge))
-//     {
-//         // Ensure we have a valid animation montage
-//         if (ChargeMontage)
-//         {
-//             // Play the charge attack montage
-//             ControllerRef = OwnerComp.GetAIOwner();
-//             CharacterRef->PlayAnimMontage(ChargeMontage);
-//             AttackCounter++;
-//             if (GEngine)
-//             {
-//                 GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::White, FString::Printf(TEXT("Attack Counter: %d"), AttackCounter));
-//             }
-//             
-//             
-//
-//             // Set up a timer to complete the task after the animation duration
-//             CachedOwnerComp->GetWorld()->GetTimerManager().SetTimer(
-//                 AttackTimerHandle, [this]()
-//                 {
-//                     FinishAttackTask();
-//                 },
-//                 ChargeMontage->GetPlayLength(), false);
-//
-//             return EBTNodeResult::InProgress;
-//         }
-//     }
-//
-//     return EBTNodeResult::Failed;
-// }
-//
-// void UBTT_StandardAttack::FinishAttackTask()
-// {
-//     if (CachedOwnerComp)
-//     {
-//         UBlackboardComponent* BlackboardComp = CachedOwnerComp->GetBlackboardComponent();
-//         // BlackboardComp->SetValueAsBool(TEXT("TaskNodeCompleted"), true);
-//         if (BlackboardComp->GetValueAsEnum(TEXT("CurrentState")) == static_cast<uint8>(EnumEnemyState::Stunned))
-//         {
-//             AttackCounter = 0;
-//         }
-//         else if (AttackCounter >= MaxAttacks )
-//         {
-//             BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), static_cast<uint8>(EnumEnemyState::Retreat));
-//             AttackCounter = 0;  
-//         }
-//         
-//         FinishLatentTask(*CachedOwnerComp, EBTNodeResult::Succeeded);
-//     }
-// }
-
-
-
