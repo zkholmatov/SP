@@ -1,25 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTT_SetMoveSpeed.h"
+#include "BTT_SetStaticMoveSpeed.h"
 #include "AIController.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/Engine.h"
 
 
-UBTT_SetMoveSpeed::UBTT_SetMoveSpeed()
+UBTT_SetStaticMoveSpeed::UBTT_SetStaticMoveSpeed()
 {
-	NodeName = "Set Random Move Speed";
-	
+	NodeName = "Set Static Move Speed";
 }
 
-EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTT_SetStaticMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	SpeedLimit = FMath::RandRange(350,500);
-	NewSpeed = SpeedLimit;
-	UE_LOG(LogTemp, Error, TEXT("Speed: %f"), NewSpeed);
-	
 	AAIController* AIOwner = OwnerComp.GetAIOwner();
 	if (!AIOwner)
 	{
