@@ -52,6 +52,26 @@ EBTNodeResult::Type UBTT_StandardAttack::ExecuteTask(UBehaviorTreeComponent& Own
     return EBTNodeResult::Failed;
 }
 
+EBTNodeResult::Type UBTT_StandardAttack::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+    if (ControllerRef && CharacterRef)
+    {
+        // Stop the character's movement
+        ControllerRef->StopMovement();
+    
+        // Clear any ongoing attack timers
+        CachedOwnerComp->GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
+    }
+    
+    // // EBTNodeResult::Aborted;
+    // Super::FinishLatentAbort(*CachedOwnerComp);
+    //
+    // // // Call the base class implementation
+    // // Super::AbortTask(OwnerComp, NodeMemory);
+    
+    return Super::AbortTask(OwnerComp, NodeMemory);
+}
+
 void UBTT_StandardAttack::FinishAttackTask()
 {
     
