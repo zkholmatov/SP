@@ -20,7 +20,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
 	FBlackboardKeySelector Counter;
 
-	// UPROPERTY(BlueprintReadOnly, Category = "Count")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
+	int min;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
+    int max;
 	// int MaxCount;
 
 protected:

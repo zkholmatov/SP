@@ -14,7 +14,7 @@ UBTD_IncrementCounter::UBTD_IncrementCounter()
 bool UBTD_IncrementCounter::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	// MaxCount = FMath::RandRange(4,7);
-	int const MaxCount  = FMath::RandRange(4,7);
+	int const MaxCount  = FMath::RandRange(min,max);
 	
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (BlackboardComponent)
