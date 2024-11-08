@@ -10,13 +10,13 @@
 
 UBTT_SetMoveSpeed::UBTT_SetMoveSpeed()
 {
-	NodeName = "Set AI Speed";
-	// NewSpeed = FMath::RandRange(275,400); // default speed
+	NodeName = "Set Random Move Speed";
+	
 }
 
 EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	SpeedLimit = FMath::RandRange(275,400);
+	SpeedLimit = FMath::RandRange(350,500);
 	NewSpeed = SpeedLimit;
 	UE_LOG(LogTemp, Error, TEXT("Speed: %f"), NewSpeed);
 	

@@ -14,6 +14,7 @@ public:
 	UBTT_StandardAttack();
 
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	UFUNCTION()
 	void FinishAttackTask();
@@ -27,6 +28,4 @@ private:
 	UBehaviorTreeComponent* CachedOwnerComp;
 
 	FTimerHandle AttackTimerHandle; // Timer handle for attack finish
-
-	
 };
