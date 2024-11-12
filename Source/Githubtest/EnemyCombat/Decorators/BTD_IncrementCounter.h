@@ -24,7 +24,7 @@ public:
 	int min;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
     int max;
-	// int MaxCount;
+	
 
 protected:
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
