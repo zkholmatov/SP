@@ -59,7 +59,7 @@ EBTNodeResult::Type UBTT_StandardAttack::AbortTask(UBehaviorTreeComponent& Owner
         // Stop the character's movement
         ControllerRef->StopMovement();
     
-        // Clear any ongoing attack timers
+        // Clear attack timers
         CachedOwnerComp->GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
     }
     
