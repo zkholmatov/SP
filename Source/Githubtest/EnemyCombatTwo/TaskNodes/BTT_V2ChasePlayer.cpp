@@ -20,7 +20,7 @@ UBTT_V2ChasePlayer::UBTT_V2ChasePlayer()
     CharacterRef = nullptr;
     CachedOwnerComp = nullptr;
 
-    // AcceptanceRadius = 100.0f;  
+    AcceptableRadius = 185.0f;
 }
 
 // Executes the task.
@@ -31,29 +31,16 @@ EBTNodeResult::Type UBTT_V2ChasePlayer::ExecuteTask(UBehaviorTreeComponent& Owne
     ControllerRef = OwnerComp.GetAIOwner();
     CachedOwnerComp = &OwnerComp;
 
+    ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+
     if (!CharacterRef || !ControllerRef || !CachedOwnerComp)
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to get required references in ExecuteTask."));
         return EBTNodeResult::Failed;
     }
 
-    FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
-    FAIMoveRequest MoveRequest{ PlayerLocation };
-    MoveRequest.SetUsePathfinding(true);
-    MoveRequest.SetAcceptanceRadius(AcceptableRadius);
-
-    if (ControllerRef->MoveTo(MoveRequest).Code == EPathFollowingRequestResult::Failed)
-    {
-        return EBTNodeResult::Failed;
-    }
-
-    // Set focus to the player
-    APawn* PlayerRef = GetWorld()->GetFirstPlayerController()->GetPawn();
-    if (PlayerRef)
-    {
-        ControllerRef->SetFocus(PlayerRef);
-    }
-
+    // Start chasing the player
+    ChasePlayer(OwnerComp);
     return EBTNodeResult::InProgress;
 }
 
@@ -66,31 +53,46 @@ void UBTT_V2ChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
         return;
     }
 
+    // Check if AI has reached the player within the acceptable radius
     FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+    float DistanceBetweenActors = FVector::Dist(PlayerLocation, CharacterRef->GetActorLocation());
+    // UE_LOG(LogTemp, Log, TEXT("Distance to Player: %f"), DistanceBetweenActors);
+    if (DistanceBetweenActors < AcceptableRadius + 45.0f)
+    {
+        // UE_LOG(LogTemp, Log, TEXT("AcceptableRadius: %f"), AcceptableRadius);
+        // UE_LOG(LogTemp, Error, TEXT("Radius reached "));
+        FinishTask(OwnerComp);
+        return;
+    }
+    
+    ChasePlayer(OwnerComp); // Keep running son
+}
+
+// Function to make the AI chase the player.
+void UBTT_V2ChasePlayer::ChasePlayer(UBehaviorTreeComponent& OwnerComp)
+{
+    APawn* PlayerRef = GetWorld()->GetFirstPlayerController()->GetPawn();
+    FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+    
     FAIMoveRequest MoveRequest{ PlayerLocation };
     MoveRequest.SetUsePathfinding(true);
     MoveRequest.SetAcceptanceRadius(AcceptableRadius);
-
-    if (ControllerRef->MoveTo(MoveRequest).Code == EPathFollowingRequestResult::Failed)
-    {
-        FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-    }
-
-    float DistanceBetweenActors = FVector::Dist(PlayerLocation, CharacterRef->GetActorLocation());
-    if (DistanceBetweenActors <= AcceptableRadius + 25)
-    {
-        FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-    }
+    
+    // Move to player location and set focus
+    ControllerRef->MoveTo(MoveRequest);
+    // ControllerRef->SetFocus(PlayerRef);
 }
 
 // Function to clean up after the chase task is finished.
 void UBTT_V2ChasePlayer::FinishTask(UBehaviorTreeComponent& OwnerComp)
 {
-    // Clear focus when the task is finished
+    // Clear focus when the task is finished and notify the behavior tree
     if (ControllerRef)
     {
-        ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+        // ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+        ControllerRef->StopMovement();
     }
 
+    // UE_LOG(LogTemp, Error, TEXT("OMG! CAN I GET YOU TO SIGN THIS PETITION?"));
     FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }
