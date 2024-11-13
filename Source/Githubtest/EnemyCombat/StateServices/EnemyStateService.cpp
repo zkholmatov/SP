@@ -36,7 +36,7 @@ void UEnemyStateService::UpdateEnemyState(UBehaviorTreeComponent& OwnerComp)
 	}
 
 	float DistanceToPlayer = FVector::Dist(PlayerRef->GetActorLocation(), CharacterRef->GetActorLocation());
-	UE_LOG(LogTemp, Log, TEXT("Distance to Player: %f"), DistanceToPlayer);
+	// UE_LOG(LogTemp, Log, TEXT("Distance to Player: %f"), DistanceToPlayer);
 
 	UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
 	if (!BlackboardComp) {
