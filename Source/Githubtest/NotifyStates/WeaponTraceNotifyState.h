@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "MyCCombatNotifyState.generated.h"
+#include "WeaponTraceNotifyState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GITHUBTEST_API UMyCCombatNotifyState : public UAnimNotifyState
+class GITHUBTEST_API UWeaponTraceNotifyState : public UAnimNotifyState
 {
 	GENERATED_BODY()
 	
