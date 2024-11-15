@@ -56,7 +56,7 @@ void UBTT_V2ChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
     // Check if AI has reached the player within the acceptable radius
     FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
     float DistanceBetweenActors = FVector::Dist(PlayerLocation, CharacterRef->GetActorLocation());
-    // UE_LOG(LogTemp, Log, TEXT("Distance to Player: %f"), DistanceBetweenActors);
+    UE_LOG(LogTemp, Log, TEXT("Distance to Player: %f"), DistanceBetweenActors);
     if (DistanceBetweenActors < AcceptableRadius + 45.0f)
     {
         // UE_LOG(LogTemp, Log, TEXT("AcceptableRadius: %f"), AcceptableRadius);
