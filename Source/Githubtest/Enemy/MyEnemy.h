@@ -52,12 +52,20 @@ public:
 	// void DetectPawn(APawn* DetectedPawn, APawn* PawnToDetect);
 
 	// Custom event that can be overridden in Blueprints, used to handle sword trace events
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Custom")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon Trace")
 	void MySwordTraceEvent();
 
 	// Custom event that can be overridden in Blueprints, used to handle stopping of sword trace events
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Custom")
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Weapon Trace")
 	void MySwordTraceStopEvent();
+	
+	// Custom event that can be overridden in Blueprints
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Projectile")
+    void MyFireProjectileEvent();
+
+	// // Custom event that can be overridden in Blueprints
+	// UFUNCTION(BlueprintImplementableEvent, BlueprintCallable,Category = "Projectile")
+	// void MyFireProjectileStopEvent();
 
 	UBlackboardComponent* GetBlackboardComponent() const { return BlackboardComp; }
 
