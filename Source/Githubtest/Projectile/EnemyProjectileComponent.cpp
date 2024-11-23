@@ -46,3 +46,5 @@ void UEnemyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf
 	GetWorld()->SpawnActor(ProjectileClass, &SpawnLocation, &SpawnRotation);
 }
 
+
+

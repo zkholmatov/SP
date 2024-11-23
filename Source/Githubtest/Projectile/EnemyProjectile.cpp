@@ -75,7 +75,7 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
         DeathTimerHandle,  // Handle to manage the death timer
         this,              // The object that owns the timer
         &AEnemyProjectile::DestroyProjectile, // Function to call when the timer expires
-        .05f               // Delay before calling the function, in seconds
+        .05f               // Delay before calling the function, in seconds----------------------------turn me into UPROP??
     );
 
     // Disable collision on the particle component if it's valid
