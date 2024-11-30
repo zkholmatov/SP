@@ -46,5 +46,21 @@ void UEnemyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf
 	GetWorld()->SpawnActor(ProjectileClass, &SpawnLocation, &SpawnRotation);
 }
 
+void UEnemyProjectileComponent::SpawnProjectileFromSocket(FName SocketName, TSubclassOf<AActor> ProjectileClass)
+{
+	
+	UStaticMeshComponent* SpawnPointComp {Cast<UStaticMeshComponent>(GetOwner()->GetDefaultSubobjectByName(SocketName))};
+	// Get the socket transform
+	// FTransform SocketTransform = SpawnPointComp->GetSocketTransform(SocketName);
+
+	// FVector SpawnLocation = SocketTransform.GetLocation();
+	FVector SpawnLocation = SpawnPointComp->GetSocketLocation(SocketName);
+	
+	FVector PlayerLocation = GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation();
+
+	FRotator SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, PlayerLocation);
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnLocation, SpawnRotation);
+}
 
 
