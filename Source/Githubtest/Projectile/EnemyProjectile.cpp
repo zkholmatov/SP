@@ -39,7 +39,7 @@ void AEnemyProjectile::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-// Handles the event when the projectile begins overlapping with another actor
+
 void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 {
     // Cast the other actor to APawn to check if it's a player-controlled pawn
@@ -75,7 +75,7 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
         DeathTimerHandle,  // Handle to manage the death timer
         this,              // The object that owns the timer
         &AEnemyProjectile::DestroyProjectile, // Function to call when the timer expires
-        .05f               // Delay before calling the function, in seconds----------------------------turn me into UPROP??
+        .5f               // Delay before calling the function, in seconds----------------------------turn me into UPROP??
     );
 
     // Disable collision on the particle component if it's valid
