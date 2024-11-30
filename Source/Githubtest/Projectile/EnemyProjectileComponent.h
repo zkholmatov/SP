@@ -26,7 +26,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnProjectile(FName ComponentName, TSubclassOf<AActor> ProjectileClass );
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnProjectileFromSocket(FName SocketName, TSubclassOf<AActor> ProjectileClass);
 };
