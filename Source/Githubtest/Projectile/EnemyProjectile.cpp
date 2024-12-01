@@ -13,6 +13,8 @@ AEnemyProjectile::AEnemyProjectile()
     // Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
+    // ProjectileDeathTimer = 3.0f;
+
     // Initialize components here
     // For example, you could initialize the collision component like so:
     // CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionComponent"));
@@ -28,7 +30,7 @@ void AEnemyProjectile::BeginPlay()
         DestroyTimerHandle, // Timer handle to manage this timer
         this,               // The object that owns the timer
         &AEnemyProjectile::DestroyProjectile, // Function to call when the timer expires
-        5.0f,               // Delay before calling the function, in seconds
+        ProjectileDeathTimer,               // Delay before calling the function, in seconds
         false               // Do not loop the timer
     );
 }
@@ -75,7 +77,7 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
         DeathTimerHandle,  // Handle to manage the death timer
         this,              // The object that owns the timer
         &AEnemyProjectile::DestroyProjectile, // Function to call when the timer expires
-        .5f               // Delay before calling the function, in seconds----------------------------turn me into UPROP??
+        .05f               // Delay before calling the function, in seconds----------------------------turn me into UPROP??
     );
 
     // Disable collision on the particle component if it's valid
