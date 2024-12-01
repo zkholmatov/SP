@@ -35,6 +35,9 @@ public:
 	UFUNCTION()
 	void DestroyProjectile();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ProjectileDeathTimer;
+
 private:
 	FTimerHandle DestroyTimerHandle;
 };
