@@ -19,8 +19,8 @@ void AMyEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
 	
+	//  BlackboardComp = GetController<AAIController>()->GetBlackboardComponent(); // Causing bug?
 	// BlackboardComp->SetValueAsEnum( 
 	//     TEXT("CurrentState"), 
 	//     InitialState // Check details panel of enemyManny to see whta initial state is currently set to 
