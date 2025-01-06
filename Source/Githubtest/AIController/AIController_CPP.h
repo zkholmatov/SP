@@ -21,14 +21,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UAIPerceptionComponent> CppPerceptionComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
-	UBehaviorTree* BehaviorTree;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	// UBehaviorTree* BehaviorTree;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
-	UBlackboardComponent* BlackboardComponent;
+	// UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
+	// UBlackboardComponent* BlackboardComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	APawn* PossessedPawn;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	// APawn* PossessedPawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float sightRadius;
@@ -106,4 +106,3 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void SetStateAsChase();
 };
-

@@ -62,36 +62,36 @@ void AAIController_CPP::BeginPlay()
 	BeginPlayExtended();
 }
 
-// This is automatically called by the engine with the owner is spawned and this method is then immediately invoked
-void AAIController_CPP::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("possessed"));
-
-	PossessedPawn = InPawn; // Set PossessedPawn to reference to pawn that has instance of AI controller ie InPawn
-
-	// Check if the possessed pawn and the behavior tree are valid
-	if(BehaviorTree)
-	{
-		RunBehaviorTree(BehaviorTree);
-		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComponent))
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("behavior happening"));
-			
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to initialize the Blackboard Component!"));
-		}
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("pawn and or bt are bad "));
-	}
-	
-	SetStateAsIdle(); // Call Set idle to initialize the state of the possessed pawn 
-	OnPossessExtended(PossessedPawn);
-}
+// // This is automatically called by the engine with the owner is spawned and this method is then immediately invoked
+// void AAIController_CPP::OnPossess(APawn* InPawn)
+// {
+// 	Super::OnPossess(InPawn);
+// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("possessed"));
+//
+// 	PossessedPawn = InPawn; // Set PossessedPawn to reference to pawn that has instance of AI controller ie InPawn
+//
+// 	// Check if the possessed pawn and the behavior tree are valid
+// 	if(BehaviorTree)
+// 	{
+// 		RunBehaviorTree(BehaviorTree);
+// 		// if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComponent))
+// 		// {
+// 		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("behavior happening"));
+// 		// 	
+// 		// }
+// 		// else
+// 		// {
+// 		// 	UE_LOG(LogTemp, Error, TEXT("Failed to initialize the Blackboard Component!"));
+// 		// }
+// 	}
+// 	else
+// 	{
+// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("pawn and or bt are bad "));
+// 	}
+// 	
+// 	SetStateAsIdle(); // Call Set idle to initialize the state of the possessed pawn 
+// 	OnPossessExtended(PossessedPawn);
+// }
 
 // Used to initialize and wrap up all the config for the perception senses
 void AAIController_CPP::InitPerceptionConfig()
@@ -150,22 +150,22 @@ void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 	{
 		uint8 ENUMMERS = GetCurrentState();
 	
-		if (ENUMMERS == EnumEnemyState::Idle || ENUMMERS == EnumEnemyState::Chase || ENUMMERS == EnumEnemyState::Range)
-		{
-		 // This stuff below was a from a forum :)
+		// if (ENUMMERS == EnumEnemyState::Idle || ENUMMERS == EnumEnemyState::Chase || ENUMMERS == EnumEnemyState::Range)
+		// {
+		//  This stuff below was a from a forum :)
 		
-			if(UFunction* TriggerFunction = PossessedPawn->FindFunction(TEXT("DisplayHealthBar")))
-			{
-				// Create a buffer just in case (if we send a null buffer, the system will crash if the event has parameters).
-				// (Check the codebase to see examples sending params.)
-				uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
-				FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
-				PlayerActor->ProcessEvent(TriggerFunction, ParamsBuffer);
-			}
+			// if(UFunction* TriggerFunction = PossessedPawn->FindFunction(TEXT("DisplayHealthBar")))
+			// {
+			// 	// Create a buffer just in case (if we send a null buffer, the system will crash if the event has parameters).
+			// 	// (Check the codebase to see examples sending params.)
+			// 	uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
+			// 	FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
+			// 	PlayerActor->ProcessEvent(TriggerFunction, ParamsBuffer);
+			// }
 		
 			SetStateAsChase();
 		}
-	}
+	// }
 	OnActorFound(PlayerActor); // This a function extension for blueprints event graph 
 }
 
@@ -218,5 +218,3 @@ void AAIController_CPP::SetStateAsChase()
 		BlackboardComp->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::Chase));
 	}
 }
-
-
