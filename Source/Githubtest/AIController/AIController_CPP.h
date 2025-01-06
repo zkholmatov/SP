@@ -21,14 +21,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TObjectPtr<UAIPerceptionComponent> CppPerceptionComponent;
 
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	UBehaviorTree* BehaviorTree;
 
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI")
 	UBlackboardComponent* BlackboardComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	AActor* PossessedPawn;
+	APawn* PossessedPawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float sightRadius;
@@ -41,22 +41,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float maxAge;
-	
-	
-	
+
 protected:
 	virtual void BeginPlay() override;
 	
 private:
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAISenseConfig_Sight* SightSenseConfig;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAISenseConfig_Damage* DamageSenseConfig;
 	
 	TSubclassOf<UAISense_Sight> DominantSense;
 
-	void InitPerceptionComponent();
-	
-	
+	void InitPerceptionConfig();
+	// virtual void OnPossess(APawn* InPawn) override;
+
 public:
 
 	// This is for super advanced modification to the perception update
@@ -71,17 +71,31 @@ public:
 	// UFUNCTION()
 	// bool CanSenseActor(AActor* SensedActor, FName SenseName, const FAISenseID& StimulusType);
 
-	UFUNCTION()
-	void OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus const Stimulus);
+	UFUNCTION() // NO need for this ot be called in event graph call extending functions 
+	void OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus const& Stimulus);
+	
+	// UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+	// void OnPossessExtended(APawn* InPawn);
 
-	UFUNCTION()
-	virtual void OnPossess(APawn* InPawn) override;
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+	void BeginPlayExtended();
 
+	//************************CPP and extensions for found and lost *******************************//
 	UFUNCTION()
 	void HandleSensed(AActor* PlayerActor);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI|Perception")
+	void OnActorFound(AActor* LostActor);
 
 	UFUNCTION()
 	void HandleLostSense(AActor* PlayerActor);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI|Perception")
+	void OnActorLost(AActor* LostActor);
+	
+	//*********************************************************************//
+	// ------------------- For State Functionality ------------------------// 
+	UBlackboardComponent* GetBlackboardComp();
 
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	uint8 GetCurrentState();
@@ -92,3 +106,4 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void SetStateAsChase();
 };
+
