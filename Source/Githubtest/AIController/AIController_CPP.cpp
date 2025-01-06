@@ -6,35 +6,98 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Githubtest/Enemy/EnumEnemyState.h"
 
-AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer)
+AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	bStartAILogicOnPossess = true;
 	PossessedPawn = nullptr;
-	BehaviorTree = nullptr;
-	BlackboardComponent = nullptr;
+
+	sightRadius = 1000.0f;
+	loseSightRadius = 1200.0f;
+	peripheralVisionAngleDeg = 90.0f;
+	maxAge = 5.0f;
 
 	// Create default components for the AI Controller
-	BehaviorTree = CreateDefaultSubobject<UBehaviorTree>(TEXT("BehaviorTree"));
-	BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
+	// BlackboardComponent = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackboardComponent"));
 	CppPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
-	// THIS IS A CUSTOM METHOD
-	InitPerceptionComponent(); // Initialize perception component configs
+	SetPerceptionComponent(*CppPerceptionComponent);
+
+	// Create default senses for the AI Controller perception component
+	
+	SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
+	// Add new sight sense config to the perception component so it can be used as valid config
+	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
+	// Set the perception component to use sight as it's dominant sense
+	// If GetSense implementation doesn't work for AI sense object param use UAISense_Sight::StaticClass() or *SightSenseConfig->GetSenseImplementation()
+	// CppPerceptionComponent->SetDominantSense(DominantSense); // Didnt work idk why
+	CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
+	
+	DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense"));
+	// Add new sight sense config to the perception component so it can be used as valid config
+	CppPerceptionComponent->ConfigureSense(*DamageSenseConfig);
 }
 
 void AAIController_CPP::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CppPerceptionComponent->SetSenseEnabled(*SightSenseConfig->GetSenseImplementation(), true);
+	// THIS IS A CUSTOM METHOD
+	InitPerceptionConfig();// Initialize perception component configs
+	// CppPerceptionComponent->SetSenseEnabled(*SightSenseConfig->GetSenseImplementation(), true);
+	CppPerceptionComponent->SetSenseEnabled(UAISense_Sight::StaticClass(), true);
+
+	if (PerceptionComponent)
+	{
+		// Binds perception update to perception component delegate class function.
+		// In simple terms when the the class perception component gets an update via sight or damage it will call this function
+		PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnTargetPerceptionUpdated);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PerceptionComponent in CPP is null in BeginPlay."));
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("I BEGAN"));
+	BeginPlayExtended();
 }
 
+// // This is automatically called by the engine with the owner is spawned and this method is then immediately invoked
+// void AAIController_CPP::OnPossess(APawn* InPawn)
+// {
+// 	Super::OnPossess(InPawn);
+// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("possessed"));
+//
+// 	PossessedPawn = InPawn; // Set PossessedPawn to reference to pawn that has instance of AI controller ie InPawn
+//
+// 	// Check if the possessed pawn and the behavior tree are valid
+// 	if(BehaviorTree)
+// 	{
+// 		RunBehaviorTree(BehaviorTree);
+// 		// if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComponent))
+// 		// {
+// 		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("behavior happening"));
+// 		// 	
+// 		// }
+// 		// else
+// 		// {
+// 		// 	UE_LOG(LogTemp, Error, TEXT("Failed to initialize the Blackboard Component!"));
+// 		// }
+// 	}
+// 	else
+// 	{
+// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("pawn and or bt are bad "));
+// 	}
+// 	
+// 	SetStateAsIdle(); // Call Set idle to initialize the state of the possessed pawn 
+// 	OnPossessExtended(PossessedPawn);
+// }
 
-void AAIController_CPP::InitPerceptionComponent()
+// Used to initialize and wrap up all the config for the perception senses
+void AAIController_CPP::InitPerceptionConfig()
 {
 	// Create default components for the AI Controller
-	SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
-	if(SightSenseConfig)
+	if(SightSenseConfig && PerceptionComponent)
 	{
 		SightSenseConfig->SightRadius = sightRadius;
 		SightSenseConfig->LoseSightRadius = loseSightRadius;
@@ -44,34 +107,35 @@ void AAIController_CPP::InitPerceptionComponent()
 		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightSenseConfig->DetectionByAffiliation.bDetectFriendlies = false;
 		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = false;
-
-		// Add new sight sense config to the perception component so it can be used as valid config
+		
 		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
-		// Set the perception component to use sight as it's dominant sense
-		// If GetSense implementation doesn't work for aisense object param use UAISense_Sight::StaticClass() or *SightSenseConfig->GetSenseImplementation()
-		CppPerceptionComponent->SetDominantSense(DominantSense);
-		// Binds perception update to perception component delegate class function.
-		// In simple terms when the the class perception component gets an update via sight or damage it will call this function
-		// PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnPerceptionUpdated);
-		CppPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnTargetPerceptionUpdated);
+		CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 	}
-
-	// Create default components for the AI Controller
-	DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense"));
+	
 	// Does not need anything other than initialization because is event based 
-	if(DamageSenseConfig)
+	if(DamageSenseConfig && PerceptionComponent)
 	{
-		// Add new sight sense config to the perception component so it can be used as valid config
 		CppPerceptionComponent->ConfigureSense(*DamageSenseConfig);
 	}
+
+	
+
+	// Binds perception update to perception component delegate class function.
+	// In simple terms when the the class perception component gets an update via sight or damage it will call this function
+	// CppPerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnPerceptionUpdated);
+	// CppPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnTargetPerceptionUpdated);
+
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Configured!"));
 }
 
-void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus const Stimulus)
+void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus const& Stimulus)
 {
 	// Check if the actor is the player character
 	// Stimulus.WasSuccessfullySensed() is essentially doing what can sense actors functionality was doing in BP
 	if (Stimulus.WasSuccessfullySensed() && PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
+		
 		HandleSensed(PlayerActor);
 	}
 	else
@@ -82,103 +146,75 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 
 void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 {
-	uint8 ENUMMERS = GetCurrentState();
-	GetCurrentState();
-
-	// if (ENUMMERS == EnumEnemyState::IDLE || ENUMMERS == EnumEnemyState::CHASE || ENUMMERS == EnumEnemyState::RANGE)
-	// {
-	// 	// playerActor->DisplayHealthBar();
-	// 	SetStateAsIdle();
+	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
+	{
+		uint8 ENUMMERS = GetCurrentState();
+	
+		// if (ENUMMERS == EnumEnemyState::Idle || ENUMMERS == EnumEnemyState::Chase || ENUMMERS == EnumEnemyState::Range)
+		// {
+		//  This stuff below was a from a forum :)
+		
+			// if(UFunction* TriggerFunction = PossessedPawn->FindFunction(TEXT("DisplayHealthBar")))
+			// {
+			// 	// Create a buffer just in case (if we send a null buffer, the system will crash if the event has parameters).
+			// 	// (Check the codebase to see examples sending params.)
+			// 	uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
+			// 	FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
+			// 	PlayerActor->ProcessEvent(TriggerFunction, ParamsBuffer);
+			// }
+		
+			SetStateAsChase();
+		}
 	// }
+	OnActorFound(PlayerActor); // This a function extension for blueprints event graph 
 }
 
 void AAIController_CPP::HandleLostSense(AActor* PlayerActor)
 {
-	uint8 ENUMMERS = GetCurrentState();
-	GetCurrentState();
+	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
+	{
+		uint8 ENUMMERS = GetCurrentState();
+		SetStateAsIdle();
+	}
 
-	// if (ENUMMERS == EnumEnemyState::IDLE || ENUMMERS == EnumEnemyState::CHASE || ENUMMERS == EnumEnemyState::RANGE)
-	// {
-	// 	// playerActor->DisplayHealthBar();
-	// 	SetStateAsChase();
-	// }
+	OnActorLost(PlayerActor); // This a function extension for blueprints event graph 
 }
 
-// This is automatically called by the engine with the owner is spawned and this method is then immediately invoked
-void AAIController_CPP::OnPossess(APawn* InPawn)
+UBlackboardComponent* AAIController_CPP::GetBlackboardComp()
 {
-	Super::OnPossess(InPawn);
-
-	PossessedPawn = InPawn; // Set PossessedPawn to reference to pawn that has instance of AI controller ie InPawn
-
-	// Check if the possessed pawn and the behavior tree are valid
-	if(PossessedPawn && BehaviorTree)
+	UBlackboardComponent* BlackboardComp = GetBlackboardComponent();
+	
+	if (!BlackboardComp) 
 	{
-		RunBehaviorTree(BehaviorTree); // If both are valid run behavior tree
+		UE_LOG(LogTemp, Error, TEXT("BlackboardComp is not valid!"));
+		return nullptr; 
 	}
-	
-	SetStateAsIdle(); // Call Set idle to initialize the state of the possessed pawn 
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	
-	// Still needs to implement the get ideal range as well as the set timer by event 
+
+	return BlackboardComp; 
 }
 
 uint8 AAIController_CPP::GetCurrentState()
 {
-	if(BlackboardComponent)
+	if(UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
 	{
-		return BlackboardComponent->GetValueAsEnum(TEXT("State"));
+		return BlackboardComp->GetValueAsEnum(TEXT("State"));
 	}
 	
-	return BlackboardComponent->GetValueAsEnum(TEXT("State")); // Comment me out, for dev
-	// return EnumEnemyState::IDLE;
+	return EnumEnemyState::Idle;
 }
 
 void AAIController_CPP::SetStateAsIdle()
 {
-	if(BlackboardComponent)
+	if(UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
 	{
-		// BlackboardComponent->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::IDLE));
+		BlackboardComp->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::Idle));
 	}
 }
 
 void AAIController_CPP::SetStateAsChase()
 {
-	if(BlackboardComponent)
+	if(UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
 	{
-		// BlackboardComponent->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::Chase);
+		BlackboardComp->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::Chase));
 	}
 }
-
-// void AAIController_CPP::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
-// {
-// 	// Note from unreal doc page
-// 	// Might want to move these to special "BP_AIPerceptionComponent". what ever that means 
-// }
-
-// void AAIController_CPP::ActorsPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
-// {
-// 	Super::ActorsPerceptionUpdated(UpdatedActors);
-// }
-
-// bool AAIController_CPP::CanSenseActor(AActor* SensedActor, FName SenseName, const FAISenseID& StimulusType)
-// {
-// 	if (SensedActor == PossessedPawn)
-// 	{
-// 		FActorPerceptionBlueprintInfo PerceptionInfo;
-// 		CppPerceptionComponent->GetActorsPerception(SensedActor, PerceptionInfo);
-// 		if(StimulusType == UAISense::GetSenseID<UAISense_Sight>())
-// 		{
-// 			// Do Something if there is specific reason to do anything with different stimuli
-// 			return true;
-// 		}
-// 	}
-// }
-
-
