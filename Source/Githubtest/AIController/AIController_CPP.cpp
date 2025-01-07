@@ -19,18 +19,31 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 	// Create default components for the AI Controller
 	CppPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("CppPerceptionComponent"));
 	SetPerceptionComponent(*CppPerceptionComponent);
+	
+	// SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config")); // this sometimes gets destroyed in garbage collection
+	SightSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Sight>(this, TEXT("Sight Config")); // no garbage for me 
+	if (!SightSenseConfig)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create SightSenseConfig in constructor."));
+		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("Failed to create SightSenseConfig in constructor."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("created SightSenseConfig in constructor."));
+		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("created SightSenseConfig in constructor."));
+	}
 
 	// Create default senses for the AI Controller perception component
 	// Add new sight sense config to the perception component so it can be used as valid config
 	// Set the perception component to use sight as it's dominant sense
 	// If GetSense implementation doesn't work for AI sense object param use UAISense_Sight::StaticClass() or *SightSenseConfig->GetSenseImplementation()
 	// CppPerceptionComponent->SetDominantSense(DominantSense); // Didnt work idk why
-	SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
 	CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 
 	// Add new sight sense config to the perception component so it can be used as valid config
-	DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense"));
+	// DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense")); // this sometimes gets destroyed in garbage collection
+	DamageSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Damage>(this,TEXT("DamageSense")); // no garbage for me 
 	CppPerceptionComponent->ConfigureSense(*DamageSenseConfig);
 }
 
@@ -60,7 +73,19 @@ void AAIController_CPP::BeginPlay()
 // Used to initialize and wrap up all the config for the perception senses
 void AAIController_CPP::InitPerceptionConfig()
 {
-	// Create default components for the AI Controller
+	// Check to see if stuff is getting destroyed in garbage collection, which only happens sometimes? idk
+	if (!CppPerceptionComponent)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("CppPerceptionComponent is null in InitPerceptionConfig."));
+		return;
+	}
+	if (!SightSenseConfig)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("SightSenseConfig is null in InitPerceptionConfig."));
+		return;
+	}
+	
+	// Create default config for the sight sense and damage sense
 	if(SightSenseConfig && CppPerceptionComponent)
 	{
 		SightSenseConfig->SightRadius = sightRadius;
@@ -75,7 +100,10 @@ void AAIController_CPP::InitPerceptionConfig()
 		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
 		CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 	}
-	
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SightSenseConfig && CppPerceptionComponent are bad"));
+	}
 	// Does not need anything other than initialization because is event based 
 	if(DamageSenseConfig && CppPerceptionComponent)
 	{
@@ -97,15 +125,21 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 		// Check how long the stimulus has been inactive
 		if (Stimulus.GetAge() >= maxAge) // Wait for 1 second before triggering "lost" sense
 		{
-			HandleLostSense(PlayerActor);
+			HandleLostSense();
 		}
 		else
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
 			Stimulus.GetAge() ));
 		}
-
-		
+		// this shit is a nightmare in C++ here is the link https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-timers-in-unreal-engine
+		GetWorld()->GetTimerManager().SetTimer(
+				ForgetPlayerTimerHandle, 
+				this, 
+				&AAIController_CPP::HandleLostSense, 
+				maxAge,  // Delay for the duration of MaxAge
+				false
+			);
 	}
 	
 	
@@ -114,6 +148,12 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 
 void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 {
+	if (GetWorld()->GetTimerManager().IsTimerActive(ForgetPlayerTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ForgetPlayerTimerHandle);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ForgetPlayer timer cleared because actor was sensed again."));
+	}
+	
 	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
 		uint8 ENUMMERS = GetCurrentState();
@@ -134,18 +174,19 @@ void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 			SetStateAsChase();
 		}
 	// }
+	FoundActor = PlayerActor;
 	OnActorFound(PlayerActor); // This a function extension for blueprints event graph 
 }
 
-void AAIController_CPP::HandleLostSense(AActor* PlayerActor)
+void AAIController_CPP::HandleLostSense()
 {
-	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
+	if (FoundActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
 		uint8 ENUMMERS = GetCurrentState();
 		SetStateAsIdle();
 	}
 
-	OnActorLost(PlayerActor); // This a function extension for blueprints event graph 
+	OnActorLost(FoundActor); // This a function extension for blueprints event graph 
 }
 
 UBlackboardComponent* AAIController_CPP::GetBlackboardComp()

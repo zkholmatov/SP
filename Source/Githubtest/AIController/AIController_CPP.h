@@ -34,10 +34,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float maxAge;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	AActor* FoundActor;
+
 protected:
 	virtual void BeginPlay() override;
 	
 private:
+	FTimerHandle ForgetPlayerTimerHandle;
 
 public:
 
@@ -64,7 +68,7 @@ public:
 	void OnActorFound(AActor* LostActor);
 
 	UFUNCTION()
-	void HandleLostSense(AActor* PlayerActor);
+	void HandleLostSense();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
 	void OnActorLost(AActor* LostActor);
