@@ -12,7 +12,7 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 
 	sightRadius = 1000.0f;
 	loseSightRadius = 1200.0f;
-	peripheralVisionAngleDeg = 270.0f;
+	peripheralVisionAngleDeg = 360.0f;
 	maxAge = 3.0f;
 
 	// Create default components for the AI Controller
@@ -113,57 +113,32 @@ void AAIController_CPP::InitPerceptionConfig()
 	}
 }
 
+// Does not work :) which sucks 
+// void AAIController_CPP::PostInitializeComponents()
+// {
+// 	Super::PostInitializeComponents();
 
-void AAIController_CPP::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	InitializeAIConfigInEditor();
-
-	// Ensure components exist before applying editor values
-	if (SightSenseConfig && CppPerceptionComponent)
-	{
-		// Apply editor-configured values to the SightSenseConfig
-		SightSenseConfig->SightRadius = sightRadius;
-		SightSenseConfig->LoseSightRadius = loseSightRadius;
-		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
-		SightSenseConfig->SetMaxAge(maxAge);
-        
-		// Reapply the config to the perception component to reflect changes
-		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
-
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green, TEXT(" POST SightSenseConfig updated with editor variables."));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("POST SightSenseConfig or CppPerceptionComponent is null."));
-	}
-}
-
-
-void AAIController_CPP::RuntimeReconfigSenses(float NewSightRadius, float NewLoseSightRadius,
-	float NewPeripheralVisionAngle, float NewMaxAge)
-{
-	if (!CppPerceptionComponent)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("CppPerceptionComponent is null in runtime reconfig PerceptionConfig."));
-		return;
-	}
-	if (!SightSenseConfig)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("SightSenseConfig is null in runtime reconfig InitPerceptionConfig."));
-		return;
-	}
-	
-	SightSenseConfig->SightRadius = NewSightRadius;
-	SightSenseConfig->LoseSightRadius = NewLoseSightRadius;
-	SightSenseConfig->PeripheralVisionAngleDegrees = NewPeripheralVisionAngle;
-	SightSenseConfig->SetMaxAge(NewMaxAge);
-	
-	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
-
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("Senses reconfigured"));
-}
+	// InitializeAIConfigInEditor();
+	//
+	// // Ensure components exist before applying editor values
+	// if (SightSenseConfig && CppPerceptionComponent)
+	// {
+	// 	// Apply editor-configured values to the SightSenseConfig
+	// 	SightSenseConfig->SightRadius = sightRadius;
+	// 	SightSenseConfig->LoseSightRadius = loseSightRadius;
+	// 	SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
+	// 	SightSenseConfig->SetMaxAge(maxAge);
+ //        
+	// 	// Reapply the config to the perception component to reflect changes
+	// 	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
+	//
+	// 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green, TEXT(" POST SightSenseConfig updated with editor variables."));
+	// }
+	// else
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("POST SightSenseConfig or CppPerceptionComponent is null."));
+	// }
+// }
 
 
 void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus Stimulus)

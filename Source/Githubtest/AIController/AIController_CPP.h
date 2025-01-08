@@ -39,7 +39,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void PostInitializeComponents() override;
+	// virtual void PostInitializeComponents() override;
 	
 private:
 	FTimerHandle ForgetPlayerTimerHandle;
@@ -61,11 +61,8 @@ public:
 	UFUNCTION(blueprintCallable, Category = "AI")
 	void InitPerceptionConfig();
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "AI|Setup")
-	void InitializeAIConfigInEditor();
-
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void RuntimeReconfigSenses(float NewSightRadius, float NewLoseSightRadius, float NewPeripheralVisionAngle, float NewMaxAge);
+	// UFUNCTION(BlueprintImplementableEvent, Category = "AI|Setup")
+	// void InitializeAIConfigInEditor();
 
 	//************************CPP and extensions for found and lost *******************************//
 	UFUNCTION()
