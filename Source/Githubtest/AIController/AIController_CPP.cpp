@@ -9,19 +9,21 @@
 AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 	// bStartAILogicOnPossess = true;
-	// PossessedPawn = nullptr;
 
 	sightRadius = 1000.0f;
 	loseSightRadius = 1200.0f;
-	peripheralVisionAngleDeg = 90.0f;
-	maxAge = 5.0f;
+	peripheralVisionAngleDeg = 270.0f;
+	maxAge = 3.0f;
 
 	// Create default components for the AI Controller
+	// https://dev.epicgames.com/documentation/en-us/unreal-engine/API/Runtime/CoreUObject/UObject/FObjectInitializer
 	CppPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("CppPerceptionComponent"));
+	// CppPerceptionComponent = ObjectInitializer.CreateDefaultSubobject<UAIPerceptionComponent>(this, TEXT("CppPerceptionComponent"));
 	SetPerceptionComponent(*CppPerceptionComponent);
 	
-	// SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config")); // this sometimes gets destroyed in garbage collection
-	SightSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Sight>(this, TEXT("Sight Config")); // no garbage for me 
+	SightSenseConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config")); // this sometimes gets destroyed in garbage collection
+	// SightSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Sight>(this, TEXT("Sight Config")); // no garbage for me
+	
 	if (!SightSenseConfig)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to create SightSenseConfig in constructor."));
@@ -29,7 +31,7 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("created SightSenseConfig in constructor."));
+		UE_LOG(LogTemp, Log, TEXT("created SightSenseConfig in constructor."));
 		// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("created SightSenseConfig in constructor."));
 	}
 
@@ -42,18 +44,18 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 	CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
 
 	// Add new sight sense config to the perception component so it can be used as valid config
-	// DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense")); // this sometimes gets destroyed in garbage collection
-	DamageSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Damage>(this,TEXT("DamageSense")); // no garbage for me 
+	DamageSenseConfig = CreateDefaultSubobject<UAISenseConfig_Damage>(TEXT("DamageSense")); // this sometimes gets destroyed in garbage collection
+	// DamageSenseConfig = ObjectInitializer.CreateDefaultSubobject<UAISenseConfig_Damage>(this,TEXT("DamageSense")); // no garbage for me 
 	CppPerceptionComponent->ConfigureSense(*DamageSenseConfig);
+
+	// Initialize all the config for the senses to be overwritten later, maybe if i can get it tot work lol
+	InitPerceptionConfig();
 }
 
 void AAIController_CPP::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// THIS IS A CUSTOM METHOD
-	InitPerceptionConfig();// Initialize perception component configs
-
+	
 	if (CppPerceptionComponent)
 	{
 		// Binds perception update to perception component delegate class function.
@@ -66,9 +68,10 @@ void AAIController_CPP::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("PerceptionComponent in CPP is null in BeginPlay."));
 	}
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("I BEGAN"));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CPP I BEGAN")); // For testing 
 	BeginPlayExtended();
 }
+
 
 // Used to initialize and wrap up all the config for the perception senses
 void AAIController_CPP::InitPerceptionConfig()
@@ -92,7 +95,6 @@ void AAIController_CPP::InitPerceptionConfig()
 		SightSenseConfig->LoseSightRadius = loseSightRadius;
 		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
 		SightSenseConfig->SetMaxAge(maxAge);
-		// SightSenseConfig->AutoSuccessRangeFromLastSeenLocation = loseSightRadius - 10.f;
 		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightSenseConfig->DetectionByAffiliation.bDetectFriendlies = true;
 		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = true;
@@ -111,11 +113,68 @@ void AAIController_CPP::InitPerceptionConfig()
 	}
 }
 
+
+void AAIController_CPP::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	InitializeAIConfigInEditor();
+
+	// Ensure components exist before applying editor values
+	if (SightSenseConfig && CppPerceptionComponent)
+	{
+		// Apply editor-configured values to the SightSenseConfig
+		SightSenseConfig->SightRadius = sightRadius;
+		SightSenseConfig->LoseSightRadius = loseSightRadius;
+		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
+		SightSenseConfig->SetMaxAge(maxAge);
+        
+		// Reapply the config to the perception component to reflect changes
+		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
+
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green, TEXT(" POST SightSenseConfig updated with editor variables."));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("POST SightSenseConfig or CppPerceptionComponent is null."));
+	}
+}
+
+
+void AAIController_CPP::RuntimeReconfigSenses(float NewSightRadius, float NewLoseSightRadius,
+	float NewPeripheralVisionAngle, float NewMaxAge)
+{
+	if (!CppPerceptionComponent)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("CppPerceptionComponent is null in runtime reconfig PerceptionConfig."));
+		return;
+	}
+	if (!SightSenseConfig)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("SightSenseConfig is null in runtime reconfig InitPerceptionConfig."));
+		return;
+	}
+	
+	SightSenseConfig->SightRadius = NewSightRadius;
+	SightSenseConfig->LoseSightRadius = NewLoseSightRadius;
+	SightSenseConfig->PeripheralVisionAngleDegrees = NewPeripheralVisionAngle;
+	SightSenseConfig->SetMaxAge(NewMaxAge);
+	
+	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
+
+	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("Senses reconfigured"));
+}
+
+
 void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus Stimulus)
 {
 	// Check if the actor is the player character
 	// Stimulus.WasSuccessfullySensed() is essentially doing what can sense actors functionality was doing in BP
-	if (Stimulus.WasSuccessfullySensed())
+	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>())
+	{
+		HandleOnDamage(PlayerActor);
+	}
+	else if (Stimulus.WasSuccessfullySensed())
 	{
 		HandleSensed(PlayerActor);
 	}
@@ -142,9 +201,9 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 			);
 	}
 	
-	
 	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
 }
+
 
 void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 {
@@ -156,38 +215,37 @@ void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 	
 	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
-		uint8 ENUMMERS = GetCurrentState();
+		SetStateAsChase();
+	}
 	
-		// if (ENUMMERS == EnumEnemyState::Idle || ENUMMERS == EnumEnemyState::Chase || ENUMMERS == EnumEnemyState::Range)
-		// {
-		//  This stuff below was a from a forum :)
-		
-			// if(UFunction* TriggerFunction = PossessedPawn->FindFunction(TEXT("DisplayHealthBar")))
-			// {
-			// 	// Create a buffer just in case (if we send a null buffer, the system will crash if the event has parameters).
-			// 	// (Check the codebase to see examples sending params.)
-			// 	uint8* ParamsBuffer = static_cast<uint8*>(FMemory_Alloca(TriggerFunction->ParmsSize));
-			// 	FMemory::Memzero(ParamsBuffer, TriggerFunction->ParmsSize);
-			// 	PlayerActor->ProcessEvent(TriggerFunction, ParamsBuffer);
-			// }
-		
-			SetStateAsChase();
-		}
-	// }
 	FoundActor = PlayerActor;
-	OnActorFound(PlayerActor); // This a function extension for blueprints event graph 
+	OnActorFoundCPP(PlayerActor); // This a function extension for blueprints event graph 
 }
+
 
 void AAIController_CPP::HandleLostSense()
 {
 	if (FoundActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
-		uint8 ENUMMERS = GetCurrentState();
 		SetStateAsIdle();
 	}
 
-	OnActorLost(FoundActor); // This a function extension for blueprints event graph 
+	OnActorLostCPP(FoundActor); // This a function extension for blueprints event graph 
 }
+
+
+void AAIController_CPP::HandleOnDamage(AActor* DamagingActor)
+{
+	if (DamagingActor == GetWorld()->GetFirstPlayerController()->GetPawn())
+	{
+		uint8 ENUMMERS = GetCurrentState();
+		
+		SetStateAsChase();
+	}
+
+	OnDamageSenseCPP(DamagingActor);
+}
+
 
 UBlackboardComponent* AAIController_CPP::GetBlackboardComp()
 {
@@ -202,6 +260,7 @@ UBlackboardComponent* AAIController_CPP::GetBlackboardComp()
 	return BlackboardComp; 
 }
 
+
 uint8 AAIController_CPP::GetCurrentState()
 {
 	if(UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
@@ -212,6 +271,7 @@ uint8 AAIController_CPP::GetCurrentState()
 	return EnumEnemyState::Idle;
 }
 
+
 void AAIController_CPP::SetStateAsIdle()
 {
 	if(UBlackboardComponent* BlackboardComp = GetBlackboardComponent())
@@ -219,6 +279,7 @@ void AAIController_CPP::SetStateAsIdle()
 		BlackboardComp->SetValueAsEnum(TEXT("State"), static_cast<int8>(EnumEnemyState::Idle));
 	}
 }
+
 
 void AAIController_CPP::SetStateAsChase()
 {

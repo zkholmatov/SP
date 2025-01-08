@@ -39,39 +39,52 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 	
 private:
 	FTimerHandle ForgetPlayerTimerHandle;
 
 public:
-
+	// https://dev.epicgames.com/documentation/en-us/unreal-engine/ai-perception-in-unreal-engine
 	UFUNCTION() // NO need for this to be called in event graph call extending functions 
 	void OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus Stimulus);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
 	void BeginPlayExtended();
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAISenseConfig_Sight* SightSenseConfig;
 	
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAISenseConfig_Damage* DamageSenseConfig;
 
 	UFUNCTION(blueprintCallable, Category = "AI")
 	void InitPerceptionConfig();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI|Setup")
+	void InitializeAIConfigInEditor();
+
+	UFUNCTION(BlueprintCallable, Category = "AI")
+	void RuntimeReconfigSenses(float NewSightRadius, float NewLoseSightRadius, float NewPeripheralVisionAngle, float NewMaxAge);
 
 	//************************CPP and extensions for found and lost *******************************//
 	UFUNCTION()
 	void HandleSensed(AActor* PlayerActor);
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
-	void OnActorFound(AActor* LostActor);
+	void OnActorFoundCPP(AActor* LostActor);
 
 	UFUNCTION()
 	void HandleLostSense();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
-	void OnActorLost(AActor* LostActor);
+	void OnActorLostCPP(AActor* LostActor);
+
+	UFUNCTION()
+	void HandleOnDamage(AActor* DamagingActor);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
+	void OnDamageSenseCPP(AActor* DamagingActor);
 	
 	//*********************************************************************//
 	// ------------------- For State Functionality ------------------------// 
