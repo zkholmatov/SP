@@ -19,8 +19,20 @@ public:
 	UFUNCTION()
 	void FinishAttackTask();
 
+	UFUNCTION()
+	void HandleMontageCompleted(FName NotifyName);
+
+	UFUNCTION()
+	void HandleMontageInterrupted(FName NotifyName);
+
+	UFUNCTION()
+	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+	
 	UPROPERTY(EditAnywhere, Category = "Attack")
 	UAnimMontage* AttackMontage;
+
+	// UPROPERTY(EditAnywhere, Category = "Attack")
+	// UAnimInstance* Test;
 
 private:
 	AAIController* ControllerRef;

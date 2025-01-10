@@ -12,7 +12,7 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 
 	sightRadius = 1000.0f;
 	loseSightRadius = 1200.0f;
-	peripheralVisionAngleDeg = 270.0f;
+	peripheralVisionAngleDeg = 90.0f;
 	maxAge = 3.0f;
 
 	// Create default components for the AI Controller
@@ -58,7 +58,7 @@ void AAIController_CPP::BeginPlay()
 	
 	if (CppPerceptionComponent)
 	{
-		// Binds perception update to perception component delegate class function.
+		// Binds perception update to perception component delegate class function
 		// In simple terms when the the class perception component gets an update via sight or damage it will call this function
 		CppPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnTargetPerceptionUpdated);
 	}
@@ -113,57 +113,32 @@ void AAIController_CPP::InitPerceptionConfig()
 	}
 }
 
+// Does not work :) which sucks 
+// void AAIController_CPP::PostInitializeComponents()
+// {
+// 	Super::PostInitializeComponents();
 
-void AAIController_CPP::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	InitializeAIConfigInEditor();
-
-	// Ensure components exist before applying editor values
-	if (SightSenseConfig && CppPerceptionComponent)
-	{
-		// Apply editor-configured values to the SightSenseConfig
-		SightSenseConfig->SightRadius = sightRadius;
-		SightSenseConfig->LoseSightRadius = loseSightRadius;
-		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
-		SightSenseConfig->SetMaxAge(maxAge);
-        
-		// Reapply the config to the perception component to reflect changes
-		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
-
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green, TEXT(" POST SightSenseConfig updated with editor variables."));
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("POST SightSenseConfig or CppPerceptionComponent is null."));
-	}
-}
-
-
-void AAIController_CPP::RuntimeReconfigSenses(float NewSightRadius, float NewLoseSightRadius,
-	float NewPeripheralVisionAngle, float NewMaxAge)
-{
-	if (!CppPerceptionComponent)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("CppPerceptionComponent is null in runtime reconfig PerceptionConfig."));
-		return;
-	}
-	if (!SightSenseConfig)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("SightSenseConfig is null in runtime reconfig InitPerceptionConfig."));
-		return;
-	}
-	
-	SightSenseConfig->SightRadius = NewSightRadius;
-	SightSenseConfig->LoseSightRadius = NewLoseSightRadius;
-	SightSenseConfig->PeripheralVisionAngleDegrees = NewPeripheralVisionAngle;
-	SightSenseConfig->SetMaxAge(NewMaxAge);
-	
-	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
-
-	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("Senses reconfigured"));
-}
+	// InitializeAIConfigInEditor();
+	//
+	// // Ensure components exist before applying editor values
+	// if (SightSenseConfig && CppPerceptionComponent)
+	// {
+	// 	// Apply editor-configured values to the SightSenseConfig
+	// 	SightSenseConfig->SightRadius = sightRadius;
+	// 	SightSenseConfig->LoseSightRadius = loseSightRadius;
+	// 	SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
+	// 	SightSenseConfig->SetMaxAge(maxAge);
+ //        
+	// 	// Reapply the config to the perception component to reflect changes
+	// 	CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
+	//
+	// 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Green, TEXT(" POST SightSenseConfig updated with editor variables."));
+	// }
+	// else
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 20.f, FColor::Red, TEXT("POST SightSenseConfig or CppPerceptionComponent is null."));
+	// }
+// }
 
 
 void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimulus Stimulus)
@@ -182,14 +157,14 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 	{
 		// HandleLostSense(PlayerActor);
 		// Check how long the stimulus has been inactive
-		if (Stimulus.GetAge() >= maxAge) // Wait for 1 second before triggering "lost" sense
+		if (Stimulus.GetAge() >= maxAge) // This is mainly an edge case 
 		{
 			HandleLostSense();
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
-			Stimulus.GetAge() ));
+			// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
+			// Stimulus.GetAge() ));
 		}
 		// this shit is a nightmare in C++ here is the link https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-timers-in-unreal-engine
 		GetWorld()->GetTimerManager().SetTimer(
@@ -201,7 +176,7 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 			);
 	}
 	
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
 }
 
 
@@ -210,7 +185,7 @@ void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 	if (GetWorld()->GetTimerManager().IsTimerActive(ForgetPlayerTimerHandle))
 	{
 		GetWorld()->GetTimerManager().ClearTimer(ForgetPlayerTimerHandle);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ForgetPlayer timer cleared because actor was sensed again."));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ForgetPlayer timer cleared because actor was sensed again."));
 	}
 	
 	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
@@ -238,8 +213,6 @@ void AAIController_CPP::HandleOnDamage(AActor* DamagingActor)
 {
 	if (DamagingActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
-		uint8 ENUMMERS = GetCurrentState();
-		
 		SetStateAsChase();
 	}
 
