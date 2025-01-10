@@ -39,7 +39,7 @@ protected:
 
 public:	
 	// Called every frame to update the enemy's state
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool isLocked { false };
@@ -79,20 +79,6 @@ public:
 
 	/** Function to destroy the enemy */
 	void DestroyEnemy();
-
-// public:
-	// //VARIABLES
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VARIABLES")
-	// UAnimMontage* AttackMontage;
 	
-	// FTimerHandle AttackTimer;
-
-// 	//FUNCTIONS
-// 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Attack")
-// 	void EnemyAttack(UAnimMontage* Montage);
-// 	virtual void EnemyAttack_Implementation(UAnimMontage* Montage);
-//
-// protected:
-// 	void OnAttackComplete(); // used for end of attack montage functionality
 	
 };

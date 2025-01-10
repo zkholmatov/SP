@@ -12,7 +12,7 @@ AAIController_CPP::AAIController_CPP(const FObjectInitializer& ObjectInitializer
 
 	sightRadius = 1000.0f;
 	loseSightRadius = 1200.0f;
-	peripheralVisionAngleDeg = 360.0f;
+	peripheralVisionAngleDeg = 90.0f;
 	maxAge = 3.0f;
 
 	// Create default components for the AI Controller
@@ -58,7 +58,7 @@ void AAIController_CPP::BeginPlay()
 	
 	if (CppPerceptionComponent)
 	{
-		// Binds perception update to perception component delegate class function.
+		// Binds perception update to perception component delegate class function
 		// In simple terms when the the class perception component gets an update via sight or damage it will call this function
 		CppPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AAIController_CPP::OnTargetPerceptionUpdated);
 	}
@@ -157,14 +157,14 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 	{
 		// HandleLostSense(PlayerActor);
 		// Check how long the stimulus has been inactive
-		if (Stimulus.GetAge() >= maxAge) // Wait for 1 second before triggering "lost" sense
+		if (Stimulus.GetAge() >= maxAge) // This is mainly an edge case 
 		{
 			HandleLostSense();
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
-			Stimulus.GetAge() ));
+			// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
+			// Stimulus.GetAge() ));
 		}
 		// this shit is a nightmare in C++ here is the link https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-timers-in-unreal-engine
 		GetWorld()->GetTimerManager().SetTimer(
@@ -176,7 +176,7 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 			);
 	}
 	
-	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
+	// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
 }
 
 
@@ -185,7 +185,7 @@ void AAIController_CPP::HandleSensed(AActor* PlayerActor)
 	if (GetWorld()->GetTimerManager().IsTimerActive(ForgetPlayerTimerHandle))
 	{
 		GetWorld()->GetTimerManager().ClearTimer(ForgetPlayerTimerHandle);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ForgetPlayer timer cleared because actor was sensed again."));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("ForgetPlayer timer cleared because actor was sensed again."));
 	}
 	
 	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
@@ -213,8 +213,6 @@ void AAIController_CPP::HandleOnDamage(AActor* DamagingActor)
 {
 	if (DamagingActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
-		uint8 ENUMMERS = GetCurrentState();
-		
 		SetStateAsChase();
 	}
 
