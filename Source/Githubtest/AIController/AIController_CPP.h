@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "EngineUtils.h" // for iterator 
+#include "Githubtest/Enemy/MyEnemy.h"
 #include "Perception/AISenseConfig_Damage.h"
-#include "Perception/AISense_Damage.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "AIController_CPP.generated.h"
 
@@ -18,6 +19,9 @@ public:
 	// Sets default values for this actor's properties
 	AAIController_CPP(const FObjectInitializer& ObjectInitializer);
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
+	TArray<AMyEnemy*> EngagedEnemies;
+	
 	// Perception Component  and config variables 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI")
 	TObjectPtr<UAIPerceptionComponent> CppPerceptionComponent;
@@ -39,6 +43,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	
 	// virtual void PostInitializeComponents() override;
 	
 private:

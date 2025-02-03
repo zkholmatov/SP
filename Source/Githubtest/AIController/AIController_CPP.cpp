@@ -69,10 +69,16 @@ void AAIController_CPP::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("PerceptionComponent in CPP is null in BeginPlay."));
 	}
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CPP I BEGAN")); // For testing 
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CPP I BEGAN")); // For testing
+	
 	BeginPlayExtended();
 }
 
+void AAIController_CPP::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+}
 
 // Used to initialize and wrap up all the config for the perception senses
 void AAIController_CPP::InitPerceptionConfig()

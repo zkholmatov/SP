@@ -4,6 +4,7 @@
 #include "MyEnemy.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
