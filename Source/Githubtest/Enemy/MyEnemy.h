@@ -29,7 +29,7 @@ class GITHUBTEST_API AMyEnemy : public ACharacter, public IGenericTeamAgentInter
 
 public:
 	// Sets default values for this character's properties
-	AMyEnemy()
+	AMyEnemy();
 
 	// Component to manage the enemy's static mesh, editable and readable in the Unreal Editor, used for rendering the enemy's appearance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
