@@ -5,14 +5,16 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "EnumEnemyState.h"
+#include "GenericTeamAgentInterface.h"
 #include "MyEnemy.generated.h"
+
 
 /**
  * AMyEnemy - Character class representing an enemy in the game. Manages 
  * AI state and interactions with player characters.
  */
 UCLASS()
-class GITHUBTEST_API AMyEnemy : public ACharacter
+class GITHUBTEST_API AMyEnemy : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -36,6 +38,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	
+
+	// Team ID variable
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	uint8 TeamId;
+
+	// IGenericTeamAgentInterface
+	virtual FGenericTeamId GetGenericTeamId() const override;  
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamId) override;
 
 public:	
 	// Called every frame to update the enemy's state
@@ -81,4 +92,5 @@ public:
 	void DestroyEnemy();
 	
 	
+
 };

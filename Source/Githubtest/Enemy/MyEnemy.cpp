@@ -4,6 +4,7 @@
 #include "MyEnemy.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 // Sets default values
@@ -11,6 +12,8 @@ AMyEnemy::AMyEnemy()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	TeamId = 1; // Set all enemies to Team ID 1, anyone who isnt an enemy on screen will be considered player or neutral
 
 }
 
@@ -75,4 +78,14 @@ void AMyEnemy::SetTaskNodeCompleted(bool TaskNodeCompleted) // THis is only used
 void AMyEnemy::DestroyEnemy()
 {
 	Destroy();
+}
+
+FGenericTeamId AMyEnemy::GetGenericTeamId() const
+{
+	return FGenericTeamId(TeamId);
+}
+
+void AMyEnemy::SetGenericTeamId(const FGenericTeamId& NewTeamId)
+{
+	TeamId = NewTeamId.GetId();
 }

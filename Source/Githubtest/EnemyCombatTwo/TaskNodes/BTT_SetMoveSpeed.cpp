@@ -11,14 +11,13 @@
 UBTT_SetMoveSpeed::UBTT_SetMoveSpeed()
 {
 	NodeName = "Set Random Move Speed";
-	
 }
 
 EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	SpeedLimit = FMath::RandRange(350,500);
-	NewSpeed = SpeedLimit;
-	UE_LOG(LogTemp, Error, TEXT("Speed: %f"), NewSpeed);
+	float RandSpeed = FMath::RandRange(MinSpeed,SpeedLimit);
+	
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Speed: %f"), RandSpeed));
 	
 	AAIController* AIOwner = OwnerComp.GetAIOwner();
 	if (!AIOwner)
@@ -33,7 +32,7 @@ EBTNodeResult::Type UBTT_SetMoveSpeed::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 	
 	UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
-	MovementComponent->MaxWalkSpeed = NewSpeed;
+	MovementComponent->MaxWalkSpeed = RandSpeed;
 	
 	return EBTNodeResult::Succeeded;
 }

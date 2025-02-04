@@ -69,10 +69,16 @@ void AAIController_CPP::BeginPlay()
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("PerceptionComponent in CPP is null in BeginPlay."));
 	}
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CPP I BEGAN")); // For testing 
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("CPP I BEGAN")); // For testing
+	
 	BeginPlayExtended();
 }
 
+void AAIController_CPP::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+}
 
 // Used to initialize and wrap up all the config for the perception senses
 void AAIController_CPP::InitPerceptionConfig()
@@ -96,9 +102,9 @@ void AAIController_CPP::InitPerceptionConfig()
 		SightSenseConfig->LoseSightRadius = loseSightRadius;
 		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
 		SightSenseConfig->SetMaxAge(maxAge);
-		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = true;
+		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = false;
 		SightSenseConfig->DetectionByAffiliation.bDetectFriendlies = true;
-		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = true;
+		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = false;
 		
 		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
 		CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
@@ -146,36 +152,40 @@ void AAIController_CPP::OnTargetPerceptionUpdated(AActor* PlayerActor, FAIStimul
 {
 	// Check if the actor is the player character
 	// Stimulus.WasSuccessfullySensed() is essentially doing what can sense actors functionality was doing in BP
-	if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>())
+	if (PlayerActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
-		HandleOnDamage(PlayerActor);
-	}
-	else if (Stimulus.WasSuccessfullySensed())
-	{
-		HandleSensed(PlayerActor);
-	}
-	else
-	{
-		// HandleLostSense(PlayerActor);
-		// Check how long the stimulus has been inactive
-		if (Stimulus.GetAge() >= maxAge) // This is mainly an edge case 
+		if (Stimulus.Type == UAISense::GetSenseID<UAISense_Damage>())
 		{
-			HandleLostSense();
+			HandleOnDamage(PlayerActor);
+		}
+		else if (Stimulus.WasSuccessfullySensed())
+		{
+			HandleSensed(PlayerActor);
 		}
 		else
 		{
-			// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
-			// Stimulus.GetAge() ));
+			// HandleLostSense(PlayerActor);
+			// Check how long the stimulus has been inactive
+			if (Stimulus.GetAge() >= maxAge) // This is mainly an edge case 
+			{
+				HandleLostSense();
+			}
+			// else
+			// {
+			// 	// GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("Looking for lost player... where are you, nerd? Stimulus Age: %f"),
+			// 	// Stimulus.GetAge() ));
+			// }
+			// this stuff is a nightmare in C++ here is the link https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-timers-in-unreal-engine
+			GetWorld()->GetTimerManager().SetTimer(
+					ForgetPlayerTimerHandle, 
+					this, 
+					&AAIController_CPP::HandleLostSense, 
+					maxAge,  // Delay for the duration of MaxAge
+					false
+				);
 		}
-		// this shit is a nightmare in C++ here is the link https://dev.epicgames.com/documentation/en-us/unreal-engine/gameplay-timers-in-unreal-engine
-		GetWorld()->GetTimerManager().SetTimer(
-				ForgetPlayerTimerHandle, 
-				this, 
-				&AAIController_CPP::HandleLostSense, 
-				maxAge,  // Delay for the duration of MaxAge
-				false
-			);
 	}
+	
 	
 	// GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Yellow, TEXT("targeting"));
 }
@@ -204,6 +214,7 @@ void AAIController_CPP::HandleLostSense()
 	if (FoundActor == GetWorld()->GetFirstPlayerController()->GetPawn())
 	{
 		SetStateAsIdle();
+		FoundActor = nullptr;
 	}
 
 	OnActorLostCPP(FoundActor); // This a function extension for blueprints event graph 

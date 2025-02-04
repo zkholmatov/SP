@@ -19,8 +19,9 @@ public:
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
-	float NewSpeed;
-
+	float MinSpeed;
+	
+	UPROPERTY(EditAnywhere, Category = "AI")
 	float SpeedLimit;
 
 protected:
