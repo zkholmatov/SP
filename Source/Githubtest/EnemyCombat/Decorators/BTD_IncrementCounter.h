@@ -18,7 +18,7 @@ public:
 	UBTD_IncrementCounter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
-	FBlackboardKeySelector Counter;
+	FBlackboardKeySelector BlackboardKey;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Count")
 	int min;

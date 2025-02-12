@@ -19,12 +19,12 @@ bool UBTD_IncrementCounter::CalculateRawConditionValue(UBehaviorTreeComponent& O
 	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
 	if (BlackboardComponent)
 	{
-		int CurrentCount = BlackboardComponent->GetValueAsInt(Counter.SelectedKeyName);
+		int CurrentCount = BlackboardComponent->GetValueAsInt(BlackboardKey.SelectedKeyName);
 		// CurrentCount++;
-		BlackboardComponent->SetValueAsInt(Counter.SelectedKeyName, CurrentCount + 1);
+		BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, CurrentCount + 1);
 		if(CurrentCount >= max)
 		{
-			BlackboardComponent->SetValueAsInt(Counter.SelectedKeyName, 0);
+			BlackboardComponent->SetValueAsInt(BlackboardKey.SelectedKeyName, 0);
 		}
 	}
 

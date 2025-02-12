@@ -3,6 +3,7 @@
 
 #include "BTT_SetStaticMoveSpeed.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/Engine.h"
@@ -26,9 +27,20 @@ EBTNodeResult::Type UBTT_SetStaticMoveSpeed::ExecuteTask(UBehaviorTreeComponent&
 	{
 		return EBTNodeResult::Failed;
 	}
+
+	UBlackboardComponent* BlackboardComponent = OwnerComp.GetBlackboardComponent();
+	if (bReturnToOriginalSpeed)
+	{
+		OriginalSpeed = BlackboardComponent->GetValueAsFloat(BlackboardKey.SelectedKeyName);
+		UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
+		MovementComponent->MaxWalkSpeed = OriginalSpeed;
+	}
+	else 
+	{
+		UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
+		MovementComponent->MaxWalkSpeed = NewSpeed;
+	}
 	
-	UCharacterMovementComponent* MovementComponent = AICharacter->GetCharacterMovement();
-	MovementComponent->MaxWalkSpeed = NewSpeed;
 	
 	return EBTNodeResult::Succeeded;
 }
