@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/StaticMeshActor.h"
 #include "EngineUtils.h" // for iterator 
 #include "DynamicFloor.generated.h"
 
