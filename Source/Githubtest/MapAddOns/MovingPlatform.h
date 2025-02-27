@@ -25,10 +25,10 @@ private:
 
 public:
 	// // Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, category = "Moving Platform")
-	float AllowedDistance = 1500;
-	FVector PlatformVelocity = FVector(-200, 0, 0);
+	float AllowedDistance = 0;
+	// FVector PlatformVelocity = FVector(-200, 0, 0);
 
 	UPROPERTY()
 	USceneComponent* DefaultRoot;

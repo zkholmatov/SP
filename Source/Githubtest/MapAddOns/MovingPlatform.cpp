@@ -82,26 +82,26 @@ void AMovingPlatform::ActorMovementReturn()
 }
 
 // Called every frame
-void AMovingPlatform::Tick(float DeltaTime)
-{
+// void AMovingPlatform::Tick(float DeltaTime)
+// {
 
-	Super::Tick(DeltaTime);
-	//Moving Platform location//
-		//Get current location
-	FVector CurrentLocation = GetActorLocation();
-		//Add vector to location/ update location within tick
-	CurrentLocation += (PlatformVelocity * DeltaTime);
-		//Set location
-	SetActorLocation(CurrentLocation);
-	//Double Platform back to origin location
-		//Check platform movement distance
-	float DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
-		//Reverse Direction of platform if gone to far
-	if (DistanceMoved > AllowedDistance) 
-	{
-		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
-		StartLocation += MoveDirection * AllowedDistance;
-		SetActorLocation(StartLocation);
-		PlatformVelocity = -PlatformVelocity;
-	}
-}
+// 	Super::Tick(DeltaTime);
+// 	//Moving Platform location//
+// 		//Get current location
+// 	FVector CurrentLocation = GetActorLocation();
+// 		//Add vector to location/ update location within tick
+// 	CurrentLocation += (PlatformVelocity * DeltaTime);
+// 		//Set location
+// 	SetActorLocation(CurrentLocation);
+// 	//Double Platform back to origin location
+// 		//Check platform movement distance
+// 	float DistanceMoved = FVector::Dist(StartLocation, CurrentLocation);
+// 		//Reverse Direction of platform if gone to far
+// 	if (DistanceMoved > AllowedDistance) 
+// 	{
+// 		FVector MoveDirection = PlatformVelocity.GetSafeNormal();
+// 		StartLocation += MoveDirection * AllowedDistance;
+// 		SetActorLocation(StartLocation);
+// 		PlatformVelocity = -PlatformVelocity;
+// 	}
+// }
