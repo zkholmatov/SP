@@ -75,7 +75,7 @@ public:
 	void HandleSensed(AActor* PlayerActor);
 	
 	UFUNCTION(BlueprintImplementableEvent, Category = "AI")
-	void OnActorFoundCPP(AActor* LostActor);
+	void OnActorFoundCPP(AActor* NewlyFoundActor);
 
 	UFUNCTION()
 	void HandleLostSense();
