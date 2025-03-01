@@ -102,9 +102,9 @@ void AAIController_CPP::InitPerceptionConfig()
 		SightSenseConfig->LoseSightRadius = loseSightRadius;
 		SightSenseConfig->PeripheralVisionAngleDegrees = peripheralVisionAngleDeg;
 		SightSenseConfig->SetMaxAge(maxAge);
-		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = false;
+		SightSenseConfig->DetectionByAffiliation.bDetectEnemies = true;
 		SightSenseConfig->DetectionByAffiliation.bDetectFriendlies = true;
-		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = false;
+		SightSenseConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		
 		CppPerceptionComponent->ConfigureSense(*SightSenseConfig);
 		CppPerceptionComponent->SetDominantSense(UAISense_Sight::StaticClass());
