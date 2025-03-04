@@ -36,7 +36,8 @@ void AMovingPlatform::BeginPlay()
 	Super::BeginPlay();
 
 	// StartLocation = GetActorLocation();
-	StartLocation = StaticMeshPlatform->GetRelativeLocation();
+	// StartLocation = StaticMeshPlatform->GetRelativeLocation();
+	StartLocation = GetActorLocation();
 	TargetLocation += StartLocation;
 
 	// Start the platform movement
